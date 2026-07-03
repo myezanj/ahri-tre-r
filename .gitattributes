@@ -1,0 +1,28 @@
+# Normalize all text files to LF in the index and working tree.
+* text=auto eol=lf
+
+# Keep shell and config files explicitly Unix-friendly.
+*.sh text eol=lf
+*.bash text eol=lf
+Dockerfile* text eol=lf
+*.toml text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.rs text eol=lf
+*.c text eol=lf
+*.h text eol=lf
+*.sql text eol=lf
+
+# Binary formats must never be line-ending normalized.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.tar binary
+*.xz binary
