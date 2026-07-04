@@ -29,6 +29,16 @@ The devcontainer exports:
 - `AHRI_TRE_LAKE_CONTAINER_PATH=/workspaces/ahri-tre-r/.lake`
 - `TRE_LAKE_PATH=/workspaces/ahri-tre-r/.lake`
 
+The devcontainer reads committed defaults from `.devcontainer/.env.example`.
+Copy it to `.devcontainer/.env` only when you need local overrides; the live
+`.env` file is ignored and should not be committed.
+
+It also installs the AHRI TRE `v0.8.3` runtime release for the container
+architecture and exports `AHRI_TRE_RUNTIME_ROOT=/opt/ahri-tre-runtime`. Set
+`AHRI_TRE_RELEASE_TAG` at build time if you need to test another runtime
+release. If the runtime release is private, set `GITHUB_TOKEN` in the shell that
+rebuilds the devcontainer so Docker can download the release assets.
+
 `AHRI_TRE_LAKE_CONTAINER_PATH` is the container-visible lake storage location
 for local development. Runtime code should continue to use `TRE_LAKE_PATH`.
 

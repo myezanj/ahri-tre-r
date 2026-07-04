@@ -9,3 +9,4 @@ src/*.dll
 src/*.dylib
 dist/
 .lake/
+.devcontainer/.env

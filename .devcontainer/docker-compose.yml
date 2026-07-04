@@ -5,13 +5,15 @@ services:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
+      secrets:
+        - github_token
     init: true
     command: sleep infinity
     depends_on:
       tre-postgres:
         condition: service_healthy
     env_file:
-      - .env
+      - .env.example
     environment:
       AHRI_TRE_LAKE_CONTAINER_PATH: ${AHRI_TRE_LAKE_CONTAINER_PATH:-/workspaces/ahri-tre-r/.lake}
       TRE_LAKE_PATH: ${AHRI_TRE_LAKE_CONTAINER_PATH:-/workspaces/ahri-tre-r/.lake}
@@ -63,3 +65,7 @@ volumes:
 
 networks:
   tre-net:
+
+secrets:
+  github_token:
+    environment: GITHUB_TOKEN

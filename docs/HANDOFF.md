@@ -58,6 +58,16 @@ The devcontainer runs R with a sibling PostgreSQL service. It exports
 `TRE_LAKE_PATH` to the same container-visible location. Keep host-only paths out
 of runtime code and diagnostics.
 
+Committed defaults live in `.devcontainer/.env.example`. Developers may copy it
+to `.devcontainer/.env` for local overrides; that live env file is ignored and
+must remain uncommitted.
+
+The container image installs the `v0.8.3` AHRI TRE runtime release from
+`AHRIORG/ahri-tre-rs`, selecting the Linux artifact that matches `uname -m`, and
+exports `AHRI_TRE_RUNTIME_ROOT=/opt/ahri-tre-runtime`. If the release is
+private, the devcontainer build requires `GITHUB_TOKEN` in the build
+environment.
+
 ## Next Steps
 
 - Add CI that runs the contract smoke command against a staged runtime
