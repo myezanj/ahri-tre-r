@@ -9,6 +9,91 @@ $rdPath = Join-Path $root 'man\tre_command_wrappers.Rd'
 
 $json = Get-Content $schemaPath -Raw | ConvertFrom-Json
 
+function Normalize-ParamName {
+    param([string]$Raw)
+
+    $value = ($Raw | Out-String).Trim().ToLowerInvariant()
+    $value = $value -replace '^[\-\s]+', ''
+    $value = $value -replace '[^a-z0-9]+', '_'
+    $value = $value -replace '^_+|_+$', ''
+    $value = $value -replace '_{2,}', '_'
+    if (-not $value) {
+        return $null
+    }
+    if ($value -match '^[0-9]') {
+        return ('x_' + $value)
+    }
+    $value
+}
+
+function Parse-CommandArgs {
+    param([string]$Command)
+
+    $parsed = New-Object System.Collections.Generic.List[object]
+    if (-not $Command) {
+        return $parsed
+    }
+
+    foreach ($match in [regex]::Matches($Command, '<([^>]+)>|\[([^\]]+)\]')) {
+        $raw = if ($match.Groups[1].Success) { $match.Groups[1].Value } else { $match.Groups[2].Value }
+        $name = Normalize-ParamName $raw
+        if ($name) {
+            $parsed.Add([pscustomobject]@{ Param = $name; Key = $name })
+        }
+    }
+    $parsed
+}
+
+function Parse-ImportantInputFlags {
+    param([string]$ImportantInputs)
+
+    $parsed = New-Object System.Collections.Generic.List[object]
+    if (-not $ImportantInputs) {
+        return $parsed
+    }
+
+    foreach ($match in [regex]::Matches($ImportantInputs, '--[a-zA-Z0-9-]+')) {
+        $flag = $match.Value.Substring(2)
+        $name = Normalize-ParamName $flag
+        if ($name) {
+            $parsed.Add([pscustomobject]@{ Param = $name; Key = $flag })
+        }
+    }
+    $parsed
+}
+
+function Unique-Parameters {
+    param([System.Collections.Generic.List[object]]$Items)
+
+    $reserved = @('client', '...', '.body', '.protocol_version')
+    $seen = @{}
+    $unique = New-Object System.Collections.Generic.List[object]
+
+    foreach ($item in $Items) {
+        if (-not $item.Param -or $reserved -contains $item.Param) {
+            continue
+        }
+        if ($seen.ContainsKey($item.Param)) {
+            continue
+        }
+        $seen[$item.Param] = $true
+        $unique.Add($item)
+    }
+    $unique
+}
+
+function To-AsciiText {
+    param([string]$Text)
+
+    if (-not $Text) {
+        return ''
+    }
+
+    $flat = ($Text -replace '`r|`n', ' ').Trim()
+    $ascii = [System.Text.Encoding]::ASCII.GetString([System.Text.Encoding]::ASCII.GetBytes($flat))
+    ($ascii -replace '\s{2,}', ' ').Trim()
+}
+
 $rows = @()
 foreach ($cat in $json.categories.PSObject.Properties) {
     foreach ($item in $cat.Value) {
@@ -19,6 +104,10 @@ foreach ($cat in $json.categories.PSObject.Properties) {
                 Function = $fn
                 Command = ($item.command | Out-String).Trim()
                 Category = $cat.Name
+                StudyContext = (($item.studyContext | Out-String).Trim())
+                ImportantInputs = (($item.importantInputs | Out-String).Trim())
+                Output = (($item.output | Out-String).Trim())
+                StatusAndPurpose = $status
             }
         }
     }
@@ -37,6 +126,39 @@ $categoryFileMap = [ordered]@{
 $core = New-Object System.Text.StringBuilder
 [void]$core.AppendLine('TRE_PROTOCOL_VERSION <- "1.0.0"')
 [void]$core.AppendLine('')
+[void]$core.AppendLine('compact_null_fields <- function(x) {')
+[void]$core.AppendLine('  if (length(x) == 0L) {')
+[void]$core.AppendLine('    return(list())')
+[void]$core.AppendLine('  }')
+[void]$core.AppendLine('  x[!vapply(x, is.null, logical(1))]')
+[void]$core.AppendLine('}')
+[void]$core.AppendLine('')
+[void]$core.AppendLine('merge_request_body <- function(auto_fields = list(), dot_fields = list(), explicit_body = NULL) {')
+[void]$core.AppendLine('  if (!is.null(explicit_body)) {')
+[void]$core.AppendLine('    return(explicit_body)')
+[void]$core.AppendLine('  }')
+[void]$core.AppendLine('')
+[void]$core.AppendLine('  body <- compact_null_fields(auto_fields)')
+[void]$core.AppendLine('  dots <- compact_null_fields(dot_fields)')
+[void]$core.AppendLine('  if (length(dots) == 0L) {')
+[void]$core.AppendLine('    return(body)')
+[void]$core.AppendLine('  }')
+[void]$core.AppendLine('')
+[void]$core.AppendLine('  named <- names(dots)')
+[void]$core.AppendLine('  if (is.null(named)) {')
+[void]$core.AppendLine('    return(c(body, dots))')
+[void]$core.AppendLine('  }')
+[void]$core.AppendLine('')
+[void]$core.AppendLine('  for (i in seq_along(dots)) {')
+[void]$core.AppendLine('    key <- names(dots)[[i]]')
+[void]$core.AppendLine('    if (is.null(key) || !nzchar(key)) {')
+[void]$core.AppendLine('      next')
+[void]$core.AppendLine('    }')
+[void]$core.AppendLine('    body[[key]] <- dots[[i]]')
+[void]$core.AppendLine('  }')
+[void]$core.AppendLine('  body')
+[void]$core.AppendLine('}')
+[void]$core.AppendLine('')
 [void]$core.AppendLine('new_tre_protocol_request <- function(kind, body = list(), protocol_version = TRE_PROTOCOL_VERSION) {')
 [void]$core.AppendLine('  list(')
 [void]$core.AppendLine('    protocol_version = protocol_version,')
@@ -45,15 +167,77 @@ $core = New-Object System.Text.StringBuilder
 [void]$core.AppendLine('  )')
 [void]$core.AppendLine('}')
 [void]$core.AppendLine('')
-[void]$core.AppendLine('tre_command_call <- function(client, kind, ..., .body = NULL, .protocol_version = TRE_PROTOCOL_VERSION) {')
-[void]$core.AppendLine('  body <- if (is.null(.body)) list(...) else .body')
-[void]$core.AppendLine('  execute_json(')
+[void]$core.AppendLine('tre_result_ok <- function(envelope) {')
+[void]$core.AppendLine('  ok <- envelope$ok')
+[void]$core.AppendLine('  if (is.logical(ok) && length(ok) == 1L) {')
+[void]$core.AppendLine('    return(isTRUE(ok))')
+[void]$core.AppendLine('  }')
+[void]$core.AppendLine('  is.null(envelope$error) && is.null(envelope$failure)')
+[void]$core.AppendLine('}')
+[void]$core.AppendLine('')
+[void]$core.AppendLine('tre_extract_data <- function(envelope) {')
+[void]$core.AppendLine('  for (key in c("data", "result", "output", "body")) {')
+[void]$core.AppendLine('    if (!is.null(envelope[[key]])) {')
+[void]$core.AppendLine('      return(envelope[[key]])')
+[void]$core.AppendLine('    }')
+[void]$core.AppendLine('  }')
+[void]$core.AppendLine('  envelope')
+[void]$core.AppendLine('}')
+[void]$core.AppendLine('')
+[void]$core.AppendLine('tre_normalize_output <- function(result, output_label = NULL, status_and_purpose = NULL, function_name = NULL) {')
+[void]$core.AppendLine('  envelope <- result$envelope %||% list()')
+[void]$core.AppendLine('  if (!tre_result_ok(envelope)) {')
+[void]$core.AppendLine('    failure <- protocol_failure_summary(envelope)')
+[void]$core.AppendLine('    abort_ahri_tre(')
+[void]$core.AppendLine('      sprintf("%s failed: %s", function_name %||% "TRE command", failure$message),')
+[void]$core.AppendLine('      class = "ahri_tre_protocol_error"')
+[void]$core.AppendLine('    )')
+[void]$core.AppendLine('  }')
+[void]$core.AppendLine('')
+[void]$core.AppendLine('  structure(')
+[void]$core.AppendLine('    list(')
+[void]$core.AppendLine('      function_name = function_name,')
+[void]$core.AppendLine('      output_label = output_label,')
+[void]$core.AppendLine('      status_and_purpose = status_and_purpose,')
+[void]$core.AppendLine('      data = tre_extract_data(envelope),')
+[void]$core.AppendLine('      envelope = envelope,')
+[void]$core.AppendLine('      payloads = result$payloads %||% list()')
+[void]$core.AppendLine('    ),')
+[void]$core.AppendLine('    class = "ahri_tre_wrapper_result"')
+[void]$core.AppendLine('  )')
+[void]$core.AppendLine('}')
+[void]$core.AppendLine('')
+[void]$core.AppendLine('tre_command_call <- function(')
+[void]$core.AppendLine('  client,')
+[void]$core.AppendLine('  kind,')
+[void]$core.AppendLine('  ...,')
+[void]$core.AppendLine('  .auto_fields = list(),')
+[void]$core.AppendLine('  .body = NULL,')
+[void]$core.AppendLine('  .protocol_version = TRE_PROTOCOL_VERSION,')
+[void]$core.AppendLine('  .output_label = NULL,')
+[void]$core.AppendLine('  .status_and_purpose = NULL,')
+[void]$core.AppendLine('  .function_name = NULL')
+[void]$core.AppendLine(') {')
+[void]$core.AppendLine('  body <- merge_request_body(')
+[void]$core.AppendLine('    auto_fields = .auto_fields,')
+[void]$core.AppendLine('    dot_fields = list(...),')
+[void]$core.AppendLine('    explicit_body = .body')
+[void]$core.AppendLine('  )')
+[void]$core.AppendLine('')
+[void]$core.AppendLine('  result <- execute_json(')
 [void]$core.AppendLine('    client = client,')
 [void]$core.AppendLine('    request = new_tre_protocol_request(')
 [void]$core.AppendLine('      kind = kind,')
 [void]$core.AppendLine('      body = body,')
 [void]$core.AppendLine('      protocol_version = .protocol_version')
 [void]$core.AppendLine('    )')
+[void]$core.AppendLine('  )')
+[void]$core.AppendLine('')
+[void]$core.AppendLine('  tre_normalize_output(')
+[void]$core.AppendLine('    result = result,')
+[void]$core.AppendLine('    output_label = .output_label,')
+[void]$core.AppendLine('    status_and_purpose = .status_and_purpose,')
+[void]$core.AppendLine('    function_name = .function_name')
 [void]$core.AppendLine('  )')
 [void]$core.AppendLine('}')
 [void]$core.AppendLine('')
@@ -65,13 +249,65 @@ foreach ($categoryName in $categoryFileMap.Keys) {
     $sb = New-Object System.Text.StringBuilder
     [void]$sb.AppendLine(("# Auto-generated command wrappers for {0}" -f $categoryName))
     [void]$sb.AppendLine('')
+
     foreach ($row in $categoryRows) {
         $kind = $row.Function -replace '_', '.'
-        [void]$sb.AppendLine(('{0} <- function(client, ..., .body = NULL, .protocol_version = TRE_PROTOCOL_VERSION) {{' -f $row.Function))
-        [void]$sb.AppendLine(('  tre_command_call(client, "{0}", ..., .body = .body, .protocol_version = .protocol_version)' -f $kind))
+
+        $params = New-Object System.Collections.Generic.List[object]
+        foreach ($arg in (Parse-CommandArgs $row.Command)) {
+            $params.Add($arg)
+        }
+
+        if ($row.StudyContext -eq 'single-study') {
+            $params.Add([pscustomobject]@{ Param = 'study'; Key = 'study' })
+        }
+
+        foreach ($flag in (Parse-ImportantInputFlags $row.ImportantInputs)) {
+            $params.Add($flag)
+        }
+
+        $params = Unique-Parameters $params
+
+        $sigParts = New-Object System.Collections.Generic.List[string]
+        $sigParts.Add('client')
+        foreach ($p in $params) {
+            $sigParts.Add(($p.Param + ' = NULL'))
+        }
+        $sigParts.Add('...')
+        $sigParts.Add('.body = NULL')
+        $sigParts.Add('.protocol_version = TRE_PROTOCOL_VERSION')
+
+        [void]$sb.AppendLine(($row.Function + ' <- function(' + ($sigParts -join ', ') + ') {'))
+        [void]$sb.AppendLine('  auto_fields <- list(')
+        if ($params.Count -eq 0) {
+            [void]$sb.AppendLine('  )')
+        } else {
+            for ($i = 0; $i -lt $params.Count; $i++) {
+                $p = $params[$i]
+                $suffix = if ($i -eq ($params.Count - 1)) { '' } else { ',' }
+                [void]$sb.AppendLine(('    "{0}" = {1}{2}' -f $p.Key, $p.Param, $suffix))
+            }
+            [void]$sb.AppendLine('  )')
+        }
+
+        $outLabel = (To-AsciiText $row.Output) -replace '"', '\\"'
+        $statusLabel = (To-AsciiText $row.StatusAndPurpose) -replace '"', '\\"'
+
+        [void]$sb.AppendLine(('  tre_command_call('))
+        [void]$sb.AppendLine(('    client = client,'))
+        [void]$sb.AppendLine(('    kind = "{0}",' -f $kind))
+        [void]$sb.AppendLine(('    ...,'))
+        [void]$sb.AppendLine(('    .auto_fields = auto_fields,'))
+        [void]$sb.AppendLine(('    .body = .body,'))
+        [void]$sb.AppendLine(('    .protocol_version = .protocol_version,'))
+        [void]$sb.AppendLine(('    .output_label = "{0}",' -f $outLabel))
+        [void]$sb.AppendLine(('    .status_and_purpose = "{0}",' -f $statusLabel))
+        [void]$sb.AppendLine(('    .function_name = "{0}"' -f $row.Function))
+        [void]$sb.AppendLine(('  )'))
         [void]$sb.AppendLine('}')
         [void]$sb.AppendLine('')
     }
+
     Set-Content -Path $categoryPath -Value $sb.ToString() -Encoding UTF8
 }
 
@@ -95,20 +331,13 @@ foreach ($row in ($rows | Sort-Object Function)) {
 }
 [void]$rdb.AppendLine('\title{Generated TRE Command Wrapper Functions}')
 [void]$rdb.AppendLine('\description{')
-[void]$rdb.AppendLine('Auto-generated thin wrappers for TRE protocol command kinds. Each function forwards to \code{execute_json()} via \code{tre_command_call()}.')
+[void]$rdb.AppendLine('Auto-generated wrappers for TRE protocol commands. Function parameters are inferred from study context and important input metadata from the command schema.')
 [void]$rdb.AppendLine('}')
 [void]$rdb.AppendLine('\details{')
-[void]$rdb.AppendLine('All wrapper functions share this signature: \code{fn(client, ..., .body = NULL, .protocol_version = "1.0.0")}.')
-[void]$rdb.AppendLine('\itemize{')
-[void]$rdb.AppendLine('  \item \code{client}: an \code{ahri_tre_client} created by \code{AhriTreClient()}.')
-[void]$rdb.AppendLine('  \item \code{...}: request body fields encoded as JSON object members.')
-[void]$rdb.AppendLine('  \item \code{.body}: explicit body list, used instead of \code{...} when provided.')
-[void]$rdb.AppendLine('  \item \code{.protocol_version}: protocol version value for the request envelope.')
-[void]$rdb.AppendLine('}')
-[void]$rdb.AppendLine('Wrapper protocol kinds are derived by replacing underscores with dots, for example \code{asset_list} to \code{asset.list}.')
+[void]$rdb.AppendLine('Wrappers build protocol envelopes through \code{tre_command_call()}, validate protocol-level failures, and return normalized outputs with command output metadata.')
 [void]$rdb.AppendLine('}')
 [void]$rdb.AppendLine('\value{')
-[void]$rdb.AppendLine('Each function returns the same structured value as \code{execute_json()}: an \code{ahri_tre_protocol_result} with \code{envelope} and \code{payloads}.')
+[void]$rdb.AppendLine('Each function returns an \code{ahri_tre_wrapper_result} containing normalized \code{data}, full \code{envelope}, payloads, and output/status metadata from the command schema.')
 [void]$rdb.AppendLine('}')
 [void]$rdb.AppendLine('\keyword{package}')
 

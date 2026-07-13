@@ -3,7 +3,11 @@ wrapper_names_from_namespace <- function() {
   wrappers <- exports[vapply(exports, function(name) {
     fn <- get(name, envir = asNamespace("ahritre"), mode = "function")
     fml <- names(formals(fn))
-    identical(fml, c("client", "...", ".body", ".protocol_version"))
+    length(fml) >= 4L &&
+      identical(fml[[1]], "client") &&
+      any(fml == "...") &&
+      any(fml == ".body") &&
+      any(fml == ".protocol_version")
   }, logical(1))]
   sort(unique(wrappers))
 }
@@ -23,31 +27,53 @@ test_that("generated wrappers map function names to protocol kinds", {
 
     captured <- testthat::with_mocked_bindings(
       execute_json = function(client, request) {
-        list(client = client, request = request)
+        list(
+          envelope = list(ok = TRUE, kind = request$kind, data = request$body),
+          payloads = list()
+        )
       },
       wrapper(list(client = "ok"), token = "abc")
     )
 
-    expect_equal(captured$request$kind, gsub("_", ".", fn, fixed = TRUE), info = fn)
-    expect_equal(captured$request$protocol_version, TRE_PROTOCOL_VERSION, info = fn)
-    expect_equal(captured$request$body$token, "abc", info = fn)
+    expect_equal(captured$envelope$kind, gsub("_", ".", fn, fixed = TRUE), info = fn)
+    expect_equal(captured$data$token, "abc", info = fn)
+    expect_equal(captured$function_name, fn, info = fn)
+    expect_true(inherits(captured, "ahri_tre_wrapper_result"), info = fn)
   }
 })
 
 test_that("explicit body overrides variadic body fields", {
   captured <- testthat::with_mocked_bindings(
     execute_json = function(client, request) {
-      request
+      list(
+        envelope = list(ok = TRUE, kind = request$kind, data = request$body),
+        payloads = list()
+      )
     },
     asset_list(
       list(client = "ok"),
+      study = "ignored",
       ignored = TRUE,
       .body = list(study = "demo"),
       .protocol_version = "9.9.9"
     )
   )
 
-  expect_equal(captured$kind, "asset.list")
-  expect_equal(captured$protocol_version, "9.9.9")
-  expect_equal(captured$body, list(study = "demo"))
+  expect_equal(captured$envelope$kind, "asset.list")
+  expect_equal(captured$data, list(study = "demo"))
+})
+
+test_that("protocol failures are converted to ahri_tre_protocol_error", {
+  expect_error(
+    testthat::with_mocked_bindings(
+      execute_json = function(client, request) {
+        list(
+          envelope = list(ok = FALSE, error = list(message = "nope")),
+          payloads = list()
+        )
+      },
+      datastore_ping(list(client = "ok"))
+    ),
+    class = "ahri_tre_protocol_error"
+  )
 })

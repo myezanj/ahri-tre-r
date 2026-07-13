@@ -124,20 +124,13 @@
 \alias{vocabulary_list}
 \title{Generated TRE Command Wrapper Functions}
 \description{
-Auto-generated thin wrappers for TRE protocol command kinds. Each function forwards to \code{execute_json()} via \code{tre_command_call()}.
+Auto-generated wrappers for TRE protocol commands. Function parameters are inferred from study context and important input metadata from the command schema.
 }
 \details{
-All wrapper functions share this signature: \code{fn(client, ..., .body = NULL, .protocol_version = "1.0.0")}.
-\itemize{
-  \item \code{client}: an \code{ahri_tre_client} created by \code{AhriTreClient()}.
-  \item \code{...}: request body fields encoded as JSON object members.
-  \item \code{.body}: explicit body list, used instead of \code{...} when provided.
-  \item \code{.protocol_version}: protocol version value for the request envelope.
-}
-Wrapper protocol kinds are derived by replacing underscores with dots, for example \code{asset_list} to \code{asset.list}.
+Wrappers build protocol envelopes through \code{tre_command_call()}, validate protocol-level failures, and return normalized outputs with command output metadata.
 }
 \value{
-Each function returns the same structured value as \code{execute_json()}: an \code{ahri_tre_protocol_result} with \code{envelope} and \code{payloads}.
+Each function returns an \code{ahri_tre_wrapper_result} containing normalized \code{data}, full \code{envelope}, payloads, and output/status metadata from the command schema.
 }
 \keyword{package}
 
