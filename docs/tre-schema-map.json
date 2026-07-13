@@ -1,0 +1,1347 @@
+﻿{
+    "schemaVersion":  "1.0.0",
+    "generatedAtUtc":  "2026-07-13T17:39:52.7555273Z",
+    "source":  "C:\\Users\\Njabulo.Myeza\\OneDrive - AHRI\\Documents\\Work\\AHRI\\Projects\\TRE\\docs\\TRE Public Interfaces.csv",
+    "counts":  {
+                   "categories":  7,
+                   "interfaces":  128
+               },
+    "enums":  {
+                  "runtimeContext":  [
+                                         {
+                                             "value":  "local-only",
+                                             "meaning":  "Does not require daemon, session, profile, auth source, datastore, or lake access."
+                                         },
+                                         {
+                                             "value":  "diagnostic",
+                                             "meaning":  "Inspects local, configured, session-backed, or automation readiness."
+                                         },
+                                         {
+                                             "value":  "auth-management",
+                                             "meaning":  "Creates, inspects, or removes reusable authentication material."
+                                         },
+                                         {
+                                             "value":  "session-management",
+                                             "meaning":  "Opens, selects, inspects, reopens, or closes local live datastore sessions."
+                                         },
+                                         {
+                                             "value":  "datastore-operation",
+                                             "meaning":  "Requires daemon-backed live session or explicit automation inputs when supported."
+                                         }
+                                     ],
+                  "studyContext":  [
+                                       {
+                                           "value":  "not-applicable",
+                                           "meaning":  "The command does not use study context."
+                                       },
+                                       {
+                                           "value":  "no-study",
+                                           "meaning":  "Datastore-backed command that does not resolve a study."
+                                       },
+                                       {
+                                           "value":  "single-study",
+                                           "meaning":  "Operates in one study, resolved from --study or current session study."
+                                       },
+                                       {
+                                           "value":  "study-set",
+                                           "meaning":  "Intentionally operates across an explicit set of studies."
+                                       }
+                                   ]
+              },
+    "categories":  {
+                       "Assets, Datafiles, Datasets":  [
+                                                           {
+                                                               "command":  "asset delete",
+                                                               "function":  "asset_delete",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--name, --reason, optional --actor, --cascade, --force, --dry-run, --yes, --format",
+                                                               "output":  "Archive/delete plan or result",
+                                                               "statusAndPurpose":  "Delete all versions of a supported asset through archive/delete policy; requires primary or delegate study custodianship."
+                                                           },
+                                                           {
+                                                               "command":  "asset duo clear",
+                                                               "function":  "asset_duo_clear",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--asset, optional --version, --format",
+                                                               "output":  "Asset-version DUO clear result",
+                                                               "statusAndPurpose":  "Remove explicit DUO overrides for one asset version so effective readback can fall back to study defaults."
+                                                           },
+                                                           {
+                                                               "command":  "asset duo list",
+                                                               "function":  "asset_duo_list",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--asset, optional --version, --effective, --format",
+                                                               "output":  "Asset-version DUO restriction list",
+                                                               "statusAndPurpose":  "List explicit DUO restrictions for one asset version, or effective restrictions with source values when --effective is set."
+                                                           },
+                                                           {
+                                                               "command":  "asset duo replace",
+                                                               "function":  "asset_duo_replace",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--asset, optional --version, --restrictions, --format",
+                                                               "output":  "Asset-version DUO replacement result",
+                                                               "statusAndPurpose":  "Replace the explicit DUO override set for one asset version; empty arrays are rejected in favor of asset duo clear."
+                                                           },
+                                                           {
+                                                               "command":  "asset get",
+                                                               "function":  "asset_get",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--name, optional --type, --format",
+                                                               "output":  "Asset record",
+                                                               "statusAndPurpose":  "Fetch one asset."
+                                                           },
+                                                           {
+                                                               "command":  "asset list",
+                                                               "function":  "asset_list",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "Optional --type dataset|file; --format",
+                                                               "output":  "Asset list",
+                                                               "statusAndPurpose":  "List assets in the resolved study."
+                                                           },
+                                                           {
+                                                               "command":  "asset versions",
+                                                               "function":  "asset_versions",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--asset, optional --type, --format",
+                                                               "output":  "Asset-version list",
+                                                               "statusAndPurpose":  "List versions of one asset."
+                                                           },
+                                                           {
+                                                               "command":  "datafile delete",
+                                                               "function":  "datafile_delete",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--asset, optional --version latest|\u003csemver\u003e|all, --reason, optional --actor, --cascade, --force, --dry-run, --yes, --format",
+                                                               "output":  "Archive/delete plan or result",
+                                                               "statusAndPurpose":  "Delete a datafile version or whole datafile asset with managed payload cleanup; requires primary or delegate study custodianship."
+                                                           },
+                                                           {
+                                                               "command":  "datafile export",
+                                                               "function":  "datafile_export",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--asset, optional --version, --to, --overwrite, --format",
+                                                               "output":  "Export status",
+                                                               "statusAndPurpose":  "Copy a managed datafile payload to a requested path."
+                                                           },
+                                                           {
+                                                               "command":  "datafile list",
+                                                               "function":  "datafile_list",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--include-versions, --format",
+                                                               "output":  "Datafile asset list",
+                                                               "statusAndPurpose":  "List managed datafile assets and optionally their versions."
+                                                           },
+                                                           {
+                                                               "command":  "datafile metadata",
+                                                               "function":  "datafile_metadata",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--asset, optional --version, --format",
+                                                               "output":  "Datafile metadata",
+                                                               "statusAndPurpose":  "Show one datafile asset/version."
+                                                           },
+                                                           {
+                                                               "command":  "datafile search",
+                                                               "function":  "datafile_search",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "Name/description/format/study/tag filters; --cursor, --limit, --width, --format",
+                                                               "output":  "Datafile search results",
+                                                               "statusAndPurpose":  "Search bounded datafile catalog summaries without reading file payloads."
+                                                           },
+                                                           {
+                                                               "command":  "dataset data",
+                                                               "function":  "dataset_data",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--dataset, optional --limit, --to, --format arrow|parquet|csv|json, --compress",
+                                                               "output":  "Tabular data stream or export file",
+                                                               "statusAndPurpose":  "Read or export dataset data."
+                                                           },
+                                                           {
+                                                               "command":  "dataset delete",
+                                                               "function":  "dataset_delete",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--dataset, optional --version latest|\u003csemver\u003e|all, --reason, optional --actor, --cascade, --force, --dry-run, --yes, --format",
+                                                               "output":  "Archive/delete plan or result",
+                                                               "statusAndPurpose":  "Delete a dataset version or whole dataset asset with mandatory lake table cleanup; requires primary or delegate study custodianship."
+                                                           },
+                                                           {
+                                                               "command":  "dataset export",
+                                                               "function":  "dataset_export",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--dataset, optional --limit, --to, --format arrow|parquet|csv|json, --compress",
+                                                               "output":  "Export file",
+                                                               "statusAndPurpose":  "Export dataset rows to a file or directory-derived file."
+                                                           },
+                                                           {
+                                                               "command":  "dataset list",
+                                                               "function":  "dataset_list",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--include-versions, --format",
+                                                               "output":  "Dataset list",
+                                                               "statusAndPurpose":  "List dataset assets and optionally their versions."
+                                                           },
+                                                           {
+                                                               "command":  "dataset metadata",
+                                                               "function":  "dataset_metadata",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--dataset, --with-variables, --format",
+                                                               "output":  "Dataset metadata",
+                                                               "statusAndPurpose":  "Show dataset metadata and variable count; --with-variables includes variable definitions."
+                                                           },
+                                                           {
+                                                               "command":  "dataset preview",
+                                                               "function":  "dataset_preview",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--dataset, --limit, optional --width, --format",
+                                                               "output":  "Text or JSON row preview",
+                                                               "statusAndPurpose":  "Preview dataset rows."
+                                                           },
+                                                           {
+                                                               "command":  "dataset search",
+                                                               "function":  "dataset_search",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "Name/description/version-label/study/domain/tag filters; --cursor, --limit, --width, --format",
+                                                               "output":  "Dataset search results",
+                                                               "statusAndPurpose":  "Search bounded dataset catalog summaries; row filtering stays in dataset data/preview/export paths."
+                                                           },
+                                                           {
+                                                               "command":  "dataset withdraw",
+                                                               "function":  "dataset_withdraw",
+                                                               "category":  "Assets, Datafiles, Datasets",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "single-study",
+                                                               "importantInputs":  "--dataset, --version, --reason, optional --actor, --force, --drop-lake-table, --format",
+                                                               "output":  "Withdrawal result",
+                                                               "statusAndPurpose":  "Withdraw one faulty dataset version with audited provenance; requires primary or delegate study custodianship."
+                                                           }
+                                                       ],
+                       "Authentication, Daemon, Sessions":  [
+                                                                {
+                                                                    "command":  "auth login",
+                                                                    "function":  "auth_login",
+                                                                    "category":  "Authentication, Daemon, Sessions",
+                                                                    "runtimeContext":  "auth-management",
+                                                                    "studyContext":  "not-applicable",
+                                                                    "importantInputs":  "--write-token-file, --write-auth-context, --cache-token, --format",
+                                                                    "output":  "Text or JSON auth artifact summary",
+                                                                    "statusAndPurpose":  "Run interactive OAuth and optionally persist reusable auth material."
+                                                                },
+                                                                {
+                                                                    "command":  "auth logout",
+                                                                    "function":  "auth_logout",
+                                                                    "category":  "Authentication, Daemon, Sessions",
+                                                                    "runtimeContext":  "auth-management",
+                                                                    "studyContext":  "not-applicable",
+                                                                    "importantInputs":  "Optional global --auth-context; --token-file, --cached, --format",
+                                                                    "output":  "Text or JSON logout status",
+                                                                    "statusAndPurpose":  "Remove token material."
+                                                                },
+                                                                {
+                                                                    "command":  "auth status",
+                                                                    "function":  "auth_status",
+                                                                    "category":  "Authentication, Daemon, Sessions",
+                                                                    "runtimeContext":  "auth-management",
+                                                                    "studyContext":  "not-applicable",
+                                                                    "importantInputs":  "Optional global auth-source flags; --format",
+                                                                    "output":  "Text or JSON auth status",
+                                                                    "statusAndPurpose":  "Inspect reusable auth material."
+                                                                },
+                                                                {
+                                                                    "command":  "daemon doctor",
+                                                                    "function":  "daemon_doctor",
+                                                                    "category":  "Authentication, Daemon, Sessions",
+                                                                    "runtimeContext":  "local-only",
+                                                                    "studyContext":  "not-applicable",
+                                                                    "importantInputs":  "Reachable daemon; --format text|json",
+                                                                    "output":  "Text or daemon.doctor protocol envelope",
+                                                                    "statusAndPurpose":  "Query daemon runtime, socket, state, session, and protocol readiness checks."
+                                                                },
+                                                                {
+                                                                    "command":  "daemon start",
+                                                                    "function":  "daemon_start",
+                                                                    "category":  "Authentication, Daemon, Sessions",
+                                                                    "runtimeContext":  "local-only",
+                                                                    "studyContext":  "not-applicable",
+                                                                    "importantInputs":  "--format text|json",
+                                                                    "output":  "Text or JSON daemon status",
+                                                                    "statusAndPurpose":  "Start the local daemon process."
+                                                                },
+                                                                {
+                                                                    "command":  "daemon status",
+                                                                    "function":  "daemon_status",
+                                                                    "category":  "Authentication, Daemon, Sessions",
+                                                                    "runtimeContext":  "local-only",
+                                                                    "studyContext":  "not-applicable",
+                                                                    "importantInputs":  "--format text|json",
+                                                                    "output":  "Text or JSON daemon status",
+                                                                    "statusAndPurpose":  "Inspect daemon reachability."
+                                                                },
+                                                                {
+                                                                    "command":  "daemon stop",
+                                                                    "function":  "daemon_stop",
+                                                                    "category":  "Authentication, Daemon, Sessions",
+                                                                    "runtimeContext":  "local-only",
+                                                                    "studyContext":  "not-applicable",
+                                                                    "importantInputs":  "--format text|json",
+                                                                    "output":  "Text or JSON daemon status",
+                                                                    "statusAndPurpose":  "Stop the local daemon."
+                                                                },
+                                                                {
+                                                                    "command":  "daemon version",
+                                                                    "function":  "daemon_version",
+                                                                    "category":  "Authentication, Daemon, Sessions",
+                                                                    "runtimeContext":  "local-only",
+                                                                    "studyContext":  "not-applicable",
+                                                                    "importantInputs":  "Reachable daemon; --format text|json",
+                                                                    "output":  "Text or daemon.version protocol envelope",
+                                                                    "statusAndPurpose":  "Query running daemon build identity and protocol compatibility."
+                                                                },
+                                                                {
+                                                                    "command":  "session close [name]",
+                                                                    "function":  "session_close",
+                                                                    "category":  "Authentication, Daemon, Sessions",
+                                                                    "runtimeContext":  "session-management",
+                                                                    "studyContext":  "not-applicable",
+                                                                    "importantInputs":  "Optional name; --all",
+                                                                    "output":  "Text status",
+                                                                    "statusAndPurpose":  "Close one or all sessions."
+                                                                },
+                                                                {
+                                                                    "command":  "session list",
+                                                                    "function":  "session_list",
+                                                                    "category":  "Authentication, Daemon, Sessions",
+                                                                    "runtimeContext":  "session-management",
+                                                                    "studyContext":  "not-applicable",
+                                                                    "importantInputs":  "None",
+                                                                    "output":  "Text list",
+                                                                    "statusAndPurpose":  "List known local sessions, including the Authenticated TRE user for live authenticated sessions."
+                                                                },
+                                                                {
+                                                                    "command":  "session open-oauth \u003cname\u003e",
+                                                                    "function":  "session_open",
+                                                                    "category":  "Authentication, Daemon, Sessions",
+                                                                    "runtimeContext":  "session-management",
+                                                                    "studyContext":  "not-applicable",
+                                                                    "importantInputs":  "Issuer, client, subject, expiry, and token env flags: Stored auth path: --profile, --env-file; session name",
+                                                                    "output":  "Text session status",
+                                                                    "statusAndPurpose":  "Open an interactive OAuth-backed live session. Open a live session from stored OAuth material. Open a live session from an injected token."
+                                                                },
+                                                                {
+                                                                    "command":  "session reopen \u003cname\u003e",
+                                                                    "function":  "session_reopen",
+                                                                    "category":  "Authentication, Daemon, Sessions",
+                                                                    "runtimeContext":  "session-management",
+                                                                    "studyContext":  "not-applicable",
+                                                                    "importantInputs":  "--force-reauth, --clear-token-cache",
+                                                                    "output":  "Text session status",
+                                                                    "statusAndPurpose":  "Reopen a persisted non-secret session."
+                                                                },
+                                                                {
+                                                                    "command":  "session status [name]",
+                                                                    "function":  "session_status",
+                                                                    "category":  "Authentication, Daemon, Sessions",
+                                                                    "runtimeContext":  "session-management",
+                                                                    "studyContext":  "not-applicable",
+                                                                    "importantInputs":  "Optional session name",
+                                                                    "output":  "Text status",
+                                                                    "statusAndPurpose":  "Show session metadata and live state."
+                                                                },
+                                                                {
+                                                                    "command":  "session use \u003cname\u003e",
+                                                                    "function":  "session_use",
+                                                                    "category":  "Authentication, Daemon, Sessions",
+                                                                    "runtimeContext":  "session-management",
+                                                                    "studyContext":  "not-applicable",
+                                                                    "importantInputs":  "Session name",
+                                                                    "output":  "Text status",
+                                                                    "statusAndPurpose":  "Select the active local session."
+                                                                }
+                                                            ],
+                       "Datastore, Semantic Catalog":  [
+                                                           {
+                                                               "command":  "datastore adopt",
+                                                               "function":  "datastore_adopt",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "Existing datastore/catalog/lake values, temporary lake credential inputs, --super-user, --super-password-env, --yes, optional --format",
+                                                               "output":  "Text or JSON adoption report",
+                                                               "statusAndPurpose":  "Verify a legacy datastore and write a ready identity binding with managed lake catalog credentials."
+                                                           },
+                                                           {
+                                                               "command":  "datastore create",
+                                                               "function":  "datastore_create",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "--datastore or TRE_DATASTORE, optional --lake-base-path, --super-user, --super-password-env, --force, --yes, optional --port, --format",
+                                                               "output":  "Text or JSON creation report",
+                                                               "statusAndPurpose":  "Provision datastore metadata, roles, lake catalog state, managed catalog credentials, and the datastore-local identity binding."
+                                                           },
+                                                           {
+                                                               "command":  "datastore info",
+                                                               "function":  "datastore_info",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "TRE_DATASTORE or session/profile context; --format text|json",
+                                                               "output":  "Text or JSON runtime summary",
+                                                               "statusAndPurpose":  "Summarize datastore identity, safe binding status, connection metadata, lake state, and content counts."
+                                                           },
+                                                           {
+                                                               "command":  "datastore list",
+                                                               "function":  "datastore_list",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "--super-user, --super-password-env; optional server/port/SSL/bootstrap overrides; --format text|json",
+                                                               "output":  "Text table or JSON discovery response",
+                                                               "statusAndPurpose":  "Discover AHRI TRE datastores on the current PostgreSQL server using metadata-only inspection."
+                                                           },
+                                                           {
+                                                               "command":  "datastore ping",
+                                                               "function":  "datastore_ping",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "TRE_DATASTORE or session/profile context; --format text|json",
+                                                               "output":  "Text or JSON connectivity result",
+                                                               "statusAndPurpose":  "Check datastore reachability and identity-binding verification."
+                                                           },
+                                                           {
+                                                               "command":  "datastore rotate-lake-credential",
+                                                               "function":  "datastore_rotate",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "Datastore identity, store owner credential env, --super-user, --super-password-env, --yes, optional --format",
+                                                               "output":  "Text or JSON rotation report",
+                                                               "statusAndPurpose":  "Rotate the managed DuckLake catalog role password without changing ordinary open profiles."
+                                                           },
+                                                           {
+                                                               "command":  "datastore schema-status",
+                                                               "function":  "datastore_schema",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "(status, plan, migrate) datastore, --super-user, --super-password-env, optional --port, --format",
+                                                               "output":  "Text or JSON schema compatibility status",
+                                                               "statusAndPurpose":  "Inspect metadata schema version, migration history, missing tables, and DuckLake catalog migration ownership. Report pending/adoptable/blocked migration steps without applying them. Apply supported datastore metadata schema migrations and report before/after status."
+                                                           },
+                                                           {
+                                                               "command":  "domain add",
+                                                               "function":  "domain_add",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "--name, optional --uri, --description, --format",
+                                                               "output":  "Domain record",
+                                                               "statusAndPurpose":  "Add or validate a semantic domain."
+                                                           },
+                                                           {
+                                                               "command":  "domain delete \u003cname\u003e",
+                                                               "function":  "domain_delete",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "Domain name, --reason, optional --actor, --dry-run, --yes, --format",
+                                                               "output":  "Semantic delete plan or result",
+                                                               "statusAndPurpose":  "Physically delete an unused domain or block with dependency summary; no archive/retirement semantics."
+                                                           },
+                                                           {
+                                                               "command":  "domain get \u003cname\u003e",
+                                                               "function":  "domain_get",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "Domain name; --format",
+                                                               "output":  "Domain record",
+                                                               "statusAndPurpose":  "Fetch one domain."
+                                                           },
+                                                           {
+                                                               "command":  "domain list",
+                                                               "function":  "domain_list",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "--format text|json",
+                                                               "output":  "Domain list",
+                                                               "statusAndPurpose":  "List semantic domains."
+                                                           },
+                                                           {
+                                                               "command":  "tag get",
+                                                               "function":  "tag_get",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study or single-study",
+                                                               "importantInputs":  "--target, --name, optional --domain, --version, --asset-type, --format",
+                                                               "output":  "Tags for target",
+                                                               "statusAndPurpose":  "Inspect tags on domains, studies, variables, entities, relations, assets, datafiles, datasets, and versions."
+                                                           },
+                                                           {
+                                                               "command":  "tag list",
+                                                               "function":  "tag_list",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "--format",
+                                                               "output":  "Tag registry",
+                                                               "statusAndPurpose":  "List normalized tag labels through the stable protocol."
+                                                           },
+                                                           {
+                                                               "command":  "tag set",
+                                                               "function":  "tag_set",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study or single-study",
+                                                               "importantInputs":  "--target, --name, repeated --tag or --clear, optional --domain, --version, --asset-type, --format",
+                                                               "output":  "Updated tags for target",
+                                                               "statusAndPurpose":  "Replace the complete tag set for a supported target or clear all tags."
+                                                           },
+                                                           {
+                                                               "command":  "variable add",
+                                                               "function":  "variable_add",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "Domain, name, value type, optional ontology/vocabulary fields, --format",
+                                                               "output":  "Variable record",
+                                                               "statusAndPurpose":  "Add a variable definition."
+                                                           },
+                                                           {
+                                                               "command":  "variable delete",
+                                                               "function":  "variable_delete",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "--domain, --name, --reason, optional --actor, --dry-run, --yes, --format",
+                                                               "output":  "Semantic delete plan or result",
+                                                               "statusAndPurpose":  "Physically delete an unused variable definition or block while preserving dataset/provenance meaning."
+                                                           },
+                                                           {
+                                                               "command":  "variable get",
+                                                               "function":  "variable_get",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "--domain, --name, --format",
+                                                               "output":  "Variable record",
+                                                               "statusAndPurpose":  "Fetch one variable."
+                                                           },
+                                                           {
+                                                               "command":  "variable list",
+                                                               "function":  "variable_list",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study or single-study",
+                                                               "importantInputs":  "Optional --domain; --format",
+                                                               "output":  "Variable list",
+                                                               "statusAndPurpose":  "List semantic variables by domain, or by resolved study when no domain is provided."
+                                                           },
+                                                           {
+                                                               "command":  "variable search",
+                                                               "function":  "variable_search",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "Text/domain/value-type/vocabulary/key-role/tag filters; --cursor, --limit, --width, --format",
+                                                               "output":  "Variable search results",
+                                                               "statusAndPurpose":  "Search bounded dictionary variable summaries without reading dataset rows."
+                                                           },
+                                                           {
+                                                               "command":  "variable update",
+                                                               "function":  "variable_update",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "Domain, name, optional replacement fields, --format",
+                                                               "output":  "Variable record",
+                                                               "statusAndPurpose":  "Update variable metadata."
+                                                           },
+                                                           {
+                                                               "command":  "vocabulary add",
+                                                               "function":  "vocabulary_add",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "--domain, --name, --items, optional description, --format",
+                                                               "output":  "Vocabulary record",
+                                                               "statusAndPurpose":  "Add a vocabulary and items."
+                                                           },
+                                                           {
+                                                               "command":  "vocabulary delete",
+                                                               "function":  "vocabulary_delete",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "--domain, --name, --reason, optional --actor, --dry-run, --yes, --format",
+                                                               "output":  "Semantic delete plan or result",
+                                                               "statusAndPurpose":  "Physically delete an unused vocabulary definition or block on variables, items, mappings, and history."
+                                                           },
+                                                           {
+                                                               "command":  "vocabulary get",
+                                                               "function":  "vocabulary_get",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study",
+                                                               "importantInputs":  "--domain, --name, --format",
+                                                               "output":  "Vocabulary detail",
+                                                               "statusAndPurpose":  "Fetch one vocabulary and its items; JSON protocol output exposes items at .data.vocabulary.items."
+                                                           },
+                                                           {
+                                                               "command":  "vocabulary list",
+                                                               "function":  "vocabulary_list",
+                                                               "category":  "Datastore, Semantic Catalog",
+                                                               "runtimeContext":  "datastore-operation",
+                                                               "studyContext":  "no-study or single-study",
+                                                               "importantInputs":  "Optional --domain; --format",
+                                                               "output":  "Vocabulary list",
+                                                               "statusAndPurpose":  "List vocabularies by domain, or by resolved study when no domain is provided."
+                                                           }
+                                                       ],
+                       "Entities, Relations, Transformations, Ingest":  [
+                                                                            {
+                                                                                "command":  "entity delete",
+                                                                                "function":  "entity_delete",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "--domain, --name, --reason, optional --actor, --dry-run, --yes, --format",
+                                                                                "output":  "Semantic delete plan or result",
+                                                                                "statusAndPurpose":  "Physically delete an unused entity definition or block on relation, instance, mapping, and link dependencies."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity instance asset-link add|list",
+                                                                                "function":  "entity_instance_asset_link_add",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Instance ID, asset, optional version, transformation ID, optional --width, --format",
+                                                                                "output":  "Asset-link record or empty asset-link list",
+                                                                                "statusAndPurpose":  "Manage and audit links between entity instances and asset versions."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity instance asset-link add|list",
+                                                                                "function":  "entity_instance_asset_link_list",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Instance ID, asset, optional version, transformation ID, optional --width, --format",
+                                                                                "output":  "Asset-link record or empty asset-link list",
+                                                                                "statusAndPurpose":  "Manage and audit links between entity instances and asset versions."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity instance dataset-link add|get|list",
+                                                                                "function":  "entity_instance_dataset_link_add",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Instance ID, dataset, variable, optional version, transformation ID, optional --width, --format",
+                                                                                "output":  "Dataset-link record or empty dataset-link readback",
+                                                                                "statusAndPurpose":  "Manage and audit links between entity instances and dataset variables."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity instance dataset-link add|get|list",
+                                                                                "function":  "entity_instance_dataset_link_get",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Instance ID, dataset, variable, optional version, transformation ID, optional --width, --format",
+                                                                                "output":  "Dataset-link record or empty dataset-link readback",
+                                                                                "statusAndPurpose":  "Manage and audit links between entity instances and dataset variables."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity instance dataset-link add|get|list",
+                                                                                "function":  "entity_instance_dataset_link_list",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Instance ID, dataset, variable, optional version, transformation ID, optional --width, --format",
+                                                                                "output":  "Dataset-link record or empty dataset-link readback",
+                                                                                "statusAndPurpose":  "Manage and audit links between entity instances and dataset variables."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity instance datasets",
+                                                                                "function":  "entity_instance_datasets",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "--instance-id, optional --width, --format",
+                                                                                "output":  "Dataset readback list",
+                                                                                "statusAndPurpose":  "List dataset versions linked to an entity instance."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity instance ensure-from-dataset",
+                                                                                "function":  "entity_instance_ensure",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Domain, entity, dataset, external-id variable, optional version/template, --dry-run, --format",
+                                                                                "output":  "Instance plan or result",
+                                                                                "statusAndPurpose":  "Ensure entity instances from dataset rows."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity instance get|list|add",
+                                                                                "function":  "entity_instance_add",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Instance ID or domain/entity inputs, transformation ID, labels/notes, --format",
+                                                                                "output":  "Entity instance records",
+                                                                                "statusAndPurpose":  "Inspect or register entity instances."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity instance get|list|add",
+                                                                                "function":  "entity_instance_get",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Instance ID or domain/entity inputs, transformation ID, labels/notes, --format",
+                                                                                "output":  "Entity instance records",
+                                                                                "statusAndPurpose":  "Inspect or register entity instances."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity instance get|list|add",
+                                                                                "function":  "entity_instance_list",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Instance ID or domain/entity inputs, transformation ID, labels/notes, --format",
+                                                                                "output":  "Entity instance records",
+                                                                                "statusAndPurpose":  "Inspect or register entity instances."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity instance map add|get|list",
+                                                                                "function":  "entity_instance_map_add",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Instance ID, external ID, domain/entity filters, transformation ID, optional --width, --format",
+                                                                                "output":  "Mapping records or empty mapping list",
+                                                                                "statusAndPurpose":  "Manage and audit study-scoped entity external-ID mappings."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity instance map add|get|list",
+                                                                                "function":  "entity_instance_map_get",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Instance ID, external ID, domain/entity filters, transformation ID, optional --width, --format",
+                                                                                "output":  "Mapping records or empty mapping list",
+                                                                                "statusAndPurpose":  "Manage and audit study-scoped entity external-ID mappings."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity instance map add|get|list",
+                                                                                "function":  "entity_instance_map_list",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Instance ID, external ID, domain/entity filters, transformation ID, optional --width, --format",
+                                                                                "output":  "Mapping records or empty mapping list",
+                                                                                "statusAndPurpose":  "Manage and audit study-scoped entity external-ID mappings."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity list|get|add",
+                                                                                "function":  "entity_add",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Domain, entity name, optional metadata fields, --format",
+                                                                                "output":  "Entity records",
+                                                                                "statusAndPurpose":  "Manage semantic entity definitions."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity list|get|add",
+                                                                                "function":  "entity_get",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Domain, entity name, optional metadata fields, --format",
+                                                                                "output":  "Entity records",
+                                                                                "statusAndPurpose":  "Manage semantic entity definitions."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity list|get|add",
+                                                                                "function":  "entity_list",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Domain, entity name, optional metadata fields, --format",
+                                                                                "output":  "Entity records",
+                                                                                "statusAndPurpose":  "Manage semantic entity definitions."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity search",
+                                                                                "function":  "entity_search",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Domain/name/description/ontology/tag filters; --cursor, --limit, --width, --format",
+                                                                                "output":  "Entity search results",
+                                                                                "statusAndPurpose":  "Search bounded semantic entity definition summaries."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation delete",
+                                                                                "function":  "entity_relation_delete",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "--domain, --name, --reason, optional --actor, --dry-run, --yes, --format",
+                                                                                "output":  "Semantic delete plan or result",
+                                                                                "statusAndPurpose":  "Physically delete an unused relation definition or block on relation-instance, mapping, link, and history dependencies."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation instance asset-link add|list",
+                                                                                "function":  "entity_relation_instance_asset_link_add",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Relation instance ID, asset, optional version, transformation ID, optional --width, --format",
+                                                                                "output":  "Asset-link record or empty asset-link list",
+                                                                                "statusAndPurpose":  "Manage and audit links between relation instances and asset versions."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation instance asset-link add|list",
+                                                                                "function":  "entity_relation_instance_asset_link_list",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Relation instance ID, asset, optional version, transformation ID, optional --width, --format",
+                                                                                "output":  "Asset-link record or empty asset-link list",
+                                                                                "statusAndPurpose":  "Manage and audit links between relation instances and asset versions."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation instance dataset-link add|get|list",
+                                                                                "function":  "entity_relation_instance_dataset_link_add",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Relation instance ID, dataset, subject/object variables, optional relation variable/version, transformation ID, optional --width, --format",
+                                                                                "output":  "Dataset-link record or empty dataset-link readback",
+                                                                                "statusAndPurpose":  "Manage and audit links between relation instances and dataset variables, including endpoint and validity context."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation instance dataset-link add|get|list",
+                                                                                "function":  "entity_relation_instance_dataset_link_get",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Relation instance ID, dataset, subject/object variables, optional relation variable/version, transformation ID, optional --width, --format",
+                                                                                "output":  "Dataset-link record or empty dataset-link readback",
+                                                                                "statusAndPurpose":  "Manage and audit links between relation instances and dataset variables, including endpoint and validity context."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation instance dataset-link add|get|list",
+                                                                                "function":  "entity_relation_instance_dataset_link_list",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Relation instance ID, dataset, subject/object variables, optional relation variable/version, transformation ID, optional --width, --format",
+                                                                                "output":  "Dataset-link record or empty dataset-link readback",
+                                                                                "statusAndPurpose":  "Manage and audit links between relation instances and dataset variables, including endpoint and validity context."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation instance ensure-from-dataset",
+                                                                                "function":  "entity_relation_instance_ensure",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Domain, relation, dataset, relation/subject/object variables, optional validity variables/version, --dry-run, --format",
+                                                                                "output":  "Relation-instance plan or result",
+                                                                                "statusAndPurpose":  "Ensure relation instances from dataset rows."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation instance get|list|add",
+                                                                                "function":  "entity_relation_instance_add",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Relation instance ID or domain/name inputs, subject/object instance IDs, transformation ID, validity fields, --format",
+                                                                                "output":  "Relation instance records",
+                                                                                "statusAndPurpose":  "Inspect or register relation instances."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation instance get|list|add",
+                                                                                "function":  "entity_relation_instance_get",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Relation instance ID or domain/name inputs, subject/object instance IDs, transformation ID, validity fields, --format",
+                                                                                "output":  "Relation instance records",
+                                                                                "statusAndPurpose":  "Inspect or register relation instances."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation instance get|list|add",
+                                                                                "function":  "entity_relation_instance_list",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Relation instance ID or domain/name inputs, subject/object instance IDs, transformation ID, validity fields, --format",
+                                                                                "output":  "Relation instance records",
+                                                                                "statusAndPurpose":  "Inspect or register relation instances."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation instance map add|get|list",
+                                                                                "function":  "entity_relation_instance_map_add",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Relation instance ID, external ID, domain/name filters, transformation ID, optional --width, --format",
+                                                                                "output":  "Mapping records or empty mapping list",
+                                                                                "statusAndPurpose":  "Manage and audit study-scoped relation external-ID mappings, including endpoint context."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation instance map add|get|list",
+                                                                                "function":  "entity_relation_instance_map_get",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Relation instance ID, external ID, domain/name filters, transformation ID, optional --width, --format",
+                                                                                "output":  "Mapping records or empty mapping list",
+                                                                                "statusAndPurpose":  "Manage and audit study-scoped relation external-ID mappings, including endpoint context."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation instance map add|get|list",
+                                                                                "function":  "entity_relation_instance_map_list",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Relation instance ID, external ID, domain/name filters, transformation ID, optional --width, --format",
+                                                                                "output":  "Mapping records or empty mapping list",
+                                                                                "statusAndPurpose":  "Manage and audit study-scoped relation external-ID mappings, including endpoint context."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation list|get|add",
+                                                                                "function":  "entity_relation_add",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Domain, relation name, subject, object, optional metadata fields, --format",
+                                                                                "output":  "Relation records",
+                                                                                "statusAndPurpose":  "Manage semantic relation definitions."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation list|get|add",
+                                                                                "function":  "entity_relation_get",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Domain, relation name, subject, object, optional metadata fields, --format",
+                                                                                "output":  "Relation records",
+                                                                                "statusAndPurpose":  "Manage semantic relation definitions."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation list|get|add",
+                                                                                "function":  "entity_relation_list",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Domain, relation name, subject, object, optional metadata fields, --format",
+                                                                                "output":  "Relation records",
+                                                                                "statusAndPurpose":  "Manage semantic relation definitions."
+                                                                            },
+                                                                            {
+                                                                                "command":  "entity-relation search",
+                                                                                "function":  "entity_relation_search",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "no-study",
+                                                                                "importantInputs":  "Domain/name/description/source/target/ontology/tag filters; --cursor, --limit, --width, --format",
+                                                                                "output":  "Relation search results",
+                                                                                "statusAndPurpose":  "Search bounded semantic relation definition summaries with source/target endpoint context."
+                                                                            },
+                                                                            {
+                                                                                "command":  "ingest datafile",
+                                                                                "function":  "ingest_datafile",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "--asset, --path or --uri, file --format, versioning, encryption, hash, verification flags, --output-format",
+                                                                                "output":  "Ingest result",
+                                                                                "statusAndPurpose":  "Register and copy or reference a managed datafile."
+                                                                            },
+                                                                            {
+                                                                                "command":  "ingest dataset from-datafile",
+                                                                                "function":  "ingest_dataset_datafile",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Domain, dataset, source asset/version, file format, description, replacement/versioning and parsing flags",
+                                                                                "output":  "Materialization result",
+                                                                                "statusAndPurpose":  "Materialize a dataset asset from a managed datafile."
+                                                                            },
+                                                                            {
+                                                                                "command":  "ingest dataset from-sql",
+                                                                                "function":  "ingest_dataset_sql",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Domain, dataset, flavour, SQL, description, replacement/versioning and source connection flags, --format",
+                                                                                "output":  "Dataset ingest result",
+                                                                                "statusAndPurpose":  "Materialize a dataset from SQL source data."
+                                                                            },
+                                                                            {
+                                                                                "command":  "ingest dataset table",
+                                                                                "function":  "ingest_dataset_table",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "Domain, dataset, --path or --uri, table format, description, replacement/versioning and parsing flags, --output-format",
+                                                                                "output":  "Dataset ingest result",
+                                                                                "statusAndPurpose":  "Ingest an external table source directly as a dataset asset."
+                                                                            },
+                                                                            {
+                                                                                "command":  "ingest redcap project",
+                                                                                "function":  "ingest_redcap_project",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "--domain, optional API URL/token env, dataset and dictionary flags, --format",
+                                                                                "output":  "REDCap ingest result",
+                                                                                "statusAndPurpose":  "Ingest REDCap project artifacts and materialized form datasets."
+                                                                            },
+                                                                            {
+                                                                                "command":  "transformation list",
+                                                                                "function":  "transformation_list",
+                                                                                "category":  "Entities, Relations, Transformations, Ingest",
+                                                                                "runtimeContext":  "datastore-operation",
+                                                                                "studyContext":  "single-study",
+                                                                                "importantInputs":  "--format",
+                                                                                "output":  "Transformation summary list",
+                                                                                "statusAndPurpose":  "List transformations that produced versions in the resolved study."
+                                                                            }
+                                                                        ],
+                       "Local Commands":  [
+                                              {
+                                                  "command":  "completion \u003cshell\u003e",
+                                                  "function":  "completion",
+                                                  "category":  "Local Commands",
+                                                  "runtimeContext":  "local-only",
+                                                  "studyContext":  "not-applicable",
+                                                  "importantInputs":  "bash, elvish, fish, powershell, or zsh",
+                                                  "output":  "Shell completion script",
+                                                  "statusAndPurpose":  "Generate completions for the public CLI."
+                                              },
+                                              {
+                                                  "command":  "doctor",
+                                                  "function":  "doctor",
+                                                  "category":  "Local Commands",
+                                                  "runtimeContext":  "diagnostic",
+                                                  "studyContext":  "not-applicable",
+                                                  "importantInputs":  "--strict; optional runtime/profile/auth flags",
+                                                  "output":  "Text or JSON readiness report",
+                                                  "statusAndPurpose":  "Check local, session, and Automation readiness."
+                                              },
+                                              {
+                                                  "command":  "schema get \u003cschema-id\u003e",
+                                                  "function":  "schema_get",
+                                                  "category":  "Local Commands",
+                                                  "runtimeContext":  "local-only",
+                                                  "studyContext":  "not-applicable",
+                                                  "importantInputs":  "Schema ID; --format text|json",
+                                                  "output":  "Schema document",
+                                                  "statusAndPurpose":  "Print one known JSON Schema document."
+                                              },
+                                              {
+                                                  "command":  "schema list",
+                                                  "function":  "schema_list",
+                                                  "category":  "Local Commands",
+                                                  "runtimeContext":  "local-only",
+                                                  "studyContext":  "not-applicable",
+                                                  "importantInputs":  "--format text|json",
+                                                  "output":  "Schema identifiers",
+                                                  "statusAndPurpose":  "List stable JSON control-plane schema IDs and the coverage map."
+                                              },
+                                              {
+                                                  "command":  "version",
+                                                  "function":  "version",
+                                                  "category":  "Local Commands",
+                                                  "runtimeContext":  "local-only",
+                                                  "studyContext":  "not-applicable",
+                                                  "importantInputs":  "--format text|json",
+                                                  "output":  "Text version or JSON build metadata",
+                                                  "statusAndPurpose":  "Print CLI version and build metadata."
+                                              }
+                                          ],
+                       "Runtime":  [
+                                       {
+                                           "command":  "auth-management",
+                                           "function":  "auth-management",
+                                           "category":  "Runtime",
+                                           "runtimeContext":  "Creates, inspects, or removes reusable authentication material.",
+                                           "studyContext":  "",
+                                           "importantInputs":  "",
+                                           "output":  "",
+                                           "statusAndPurpose":  ""
+                                       },
+                                       {
+                                           "command":  "datastore-operation",
+                                           "function":  "datastore-operation",
+                                           "category":  "Runtime",
+                                           "runtimeContext":  "Requires either a daemon-backed live session or explicit Automation inputs when the command supports Automation.",
+                                           "studyContext":  "",
+                                           "importantInputs":  "",
+                                           "output":  "",
+                                           "statusAndPurpose":  ""
+                                       },
+                                       {
+                                           "command":  "diagnostic",
+                                           "function":  "diagnostic",
+                                           "category":  "Runtime",
+                                           "runtimeContext":  "Can inspect local, configured, session-backed, or Automation readiness depending on supplied flags.",
+                                           "studyContext":  "",
+                                           "importantInputs":  "",
+                                           "output":  "",
+                                           "statusAndPurpose":  ""
+                                       },
+                                       {
+                                           "command":  "local-only",
+                                           "function":  "local-only",
+                                           "category":  "Runtime",
+                                           "runtimeContext":  "Does not require a daemon, session, profile, auth source, datastore, or lake access.",
+                                           "studyContext":  "",
+                                           "importantInputs":  "",
+                                           "output":  "",
+                                           "statusAndPurpose":  ""
+                                       },
+                                       {
+                                           "command":  "session-management",
+                                           "function":  "session-management",
+                                           "category":  "Runtime",
+                                           "runtimeContext":  "Opens, selects, inspects, reopens, or closes local live datastore sessions.",
+                                           "studyContext":  "",
+                                           "importantInputs":  "",
+                                           "output":  "",
+                                           "statusAndPurpose":  ""
+                                       }
+                                   ],
+                       "Study, Governance":  [
+                                                 {
+                                                     "command":  "study access grant",
+                                                     "function":  "study_access_grant",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "single-study",
+                                                     "importantInputs":  "--user, --format",
+                                                     "output":  "Grant result",
+                                                     "statusAndPurpose":  "Grant study access."
+                                                 },
+                                                 {
+                                                     "command":  "study access list",
+                                                     "function":  "study_access_list",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "single-study",
+                                                     "importantInputs":  "--format",
+                                                     "output":  "Access grant list",
+                                                     "statusAndPurpose":  "List study access grants."
+                                                 },
+                                                 {
+                                                     "command":  "study access revoke",
+                                                     "function":  "study_access_revoke",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "single-study",
+                                                     "importantInputs":  "--user, --format",
+                                                     "output":  "Revocation result",
+                                                     "statusAndPurpose":  "Revoke study access."
+                                                 },
+                                                 {
+                                                     "command":  "study add",
+                                                     "function":  "study_add",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "no-study",
+                                                     "importantInputs":  "--name, --external-id, --study-type, --domain, optional description, --format",
+                                                     "output":  "Study registration",
+                                                     "statusAndPurpose":  "Register a study and link it to a domain."
+                                                 },
+                                                 {
+                                                     "command":  "study add-domain",
+                                                     "function":  "study_add_domain",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "single-study",
+                                                     "importantInputs":  "--domain, --format",
+                                                     "output":  "Study registration",
+                                                     "statusAndPurpose":  "Link the current or explicit study to a domain."
+                                                 },
+                                                 {
+                                                     "command":  "study clear-current",
+                                                     "function":  "study_clear_current",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "session-management",
+                                                     "studyContext":  "single-study",
+                                                     "importantInputs":  "--format",
+                                                     "output":  "Text or JSON status",
+                                                     "statusAndPurpose":  "Clear current study from session metadata."
+                                                 },
+                                                 {
+                                                     "command":  "study context list",
+                                                     "function":  "study_context_list",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "no-study",
+                                                     "importantInputs":  "--include-unavailable, --format",
+                                                     "output":  "Study context list",
+                                                     "statusAndPurpose":  "List available study contexts."
+                                                 },
+                                                 {
+                                                     "command":  "study current",
+                                                     "function":  "study_current",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "session-management",
+                                                     "studyContext":  "single-study",
+                                                     "importantInputs":  "--format",
+                                                     "output":  "Text or JSON status",
+                                                     "statusAndPurpose":  "Show the current study."
+                                                 },
+                                                 {
+                                                     "command":  "study custodians add-delegate",
+                                                     "function":  "study_custodians_add",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "single-study",
+                                                     "importantInputs":  "user, format, --delegate",
+                                                     "output":  "Custodian link",
+                                                     "statusAndPurpose":  "Add a delegate custodian."
+                                                 },
+                                                 {
+                                                     "command":  "study custodians list",
+                                                     "function":  "study_custodians_list",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "single-study",
+                                                     "importantInputs":  "--format",
+                                                     "output":  "Custodian list",
+                                                     "statusAndPurpose":  "List study custodians."
+                                                 },
+                                                 {
+                                                     "command":  "study custodians remove-delegate",
+                                                     "function":  "study_custodians_remove",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "single-study",
+                                                     "importantInputs":  "user, --format, -delegate",
+                                                     "output":  "Removal result",
+                                                     "statusAndPurpose":  "Remove a delegate custodian."
+                                                 },
+                                                 {
+                                                     "command":  "study custodians transfer-primary",
+                                                     "function":  "study_custodians_transfer",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "single-study",
+                                                     "importantInputs":  "user, --format, -primary",
+                                                     "output":  "Custodian link",
+                                                     "statusAndPurpose":  "Transfer primary custodianship."
+                                                 },
+                                                 {
+                                                     "command":  "study delete \u003cname\u003e",
+                                                     "function":  "study_delete",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "no-study",
+                                                     "importantInputs":  "--reason, optional --actor, --cascade, --force, --archive, --dry-run, --yes, --format",
+                                                     "output":  "Archive/delete plan or result",
+                                                     "statusAndPurpose":  "Archive by default into the special Archive study, then delete the source study with mandatory lake cleanup."
+                                                 },
+                                                 {
+                                                     "command":  "study duo list",
+                                                     "function":  "study_duo_list",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "single-study",
+                                                     "importantInputs":  "--format",
+                                                     "output":  "DUO restriction list",
+                                                     "statusAndPurpose":  "List study DUO restrictions."
+                                                 },
+                                                 {
+                                                     "command":  "study duo replace",
+                                                     "function":  "study_duo_replace",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "single-study",
+                                                     "importantInputs":  "--restrictions, --format",
+                                                     "output":  "DUO replacement result",
+                                                     "statusAndPurpose":  "Replace the study DUO restriction set."
+                                                 },
+                                                 {
+                                                     "command":  "study get \u003cname\u003e",
+                                                     "function":  "study_get",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "no-study",
+                                                     "importantInputs":  "Study name; --format",
+                                                     "output":  "Study registration",
+                                                     "statusAndPurpose":  "Fetch a study by name."
+                                                 },
+                                                 {
+                                                     "command":  "study list",
+                                                     "function":  "study_list",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "no-study",
+                                                     "importantInputs":  "--format text|json",
+                                                     "output":  "Study list",
+                                                     "statusAndPurpose":  "List studies and linked domains."
+                                                 },
+                                                 {
+                                                     "command":  "study search",
+                                                     "function":  "study_search",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "datastore-operation",
+                                                     "studyContext":  "no-study",
+                                                     "importantInputs":  "Name/title/description/domain/tag filters; --cursor, --limit, --width, --format",
+                                                     "output":  "Study search results",
+                                                     "statusAndPurpose":  "Search bounded governed study summaries."
+                                                 },
+                                                 {
+                                                     "command":  "study use \u003cname\u003e",
+                                                     "function":  "study_use",
+                                                     "category":  "Study, Governance",
+                                                     "runtimeContext":  "session-management",
+                                                     "studyContext":  "single-study",
+                                                     "importantInputs":  "Study name",
+                                                     "output":  "Text status",
+                                                     "statusAndPurpose":  "Set the current study for the active session."
+                                                 }
+                                             ]
+                   }
+}
