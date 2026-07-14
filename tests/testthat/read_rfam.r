@@ -170,6 +170,54 @@ if (is.null(bootstrap)) {
 
   cat("\n[INFO] Selected study: ", requested_study_name, "\n", sep = "")
 
+  assets_result <- asset_list(
+    client,
+    study = requested_study_name,
+    format = "json"
+  )
+  assets <- normalize_records(assets_result$data)
+  cat("[INFO] Asset entries found for selected study: ", nrow(assets), "\n", sep = "")
+  if (nrow(assets) > 0) {
+    print(utils::head(assets, 10))
+  }
+
+  asset_names <- unique(first_present_column(assets, c("name", "asset", "asset_name")))
+  asset_names <- asset_names[nzchar(asset_names) & !is.na(asset_names)]
+  for (i in seq_along(asset_names)) {
+    asset_name <- asset_names[[i]]
+    cat("\n[INFO] Reading asset versions ", i, "/", length(asset_names), ": ", asset_name, "\n", sep = "")
+    versions_result <- try(
+      asset_versions(
+        client,
+        study = requested_study_name,
+        asset = asset_name,
+        format = "json"
+      ),
+      silent = TRUE
+    )
+    if (inherits(versions_result, "try-error")) {
+      cat("[WARN] Asset version read failed: ", as.character(versions_result), "\n", sep = "")
+      next
+    }
+    versions <- normalize_records(versions_result$data)
+    cat("[INFO] Asset version entries for ", asset_name, ": ", nrow(versions), "\n", sep = "")
+    if (nrow(versions) > 0) {
+      print(utils::head(versions, 5))
+    }
+  }
+
+  datafiles_result <- datafile_list(
+    client,
+    study = requested_study_name,
+    include_versions = TRUE,
+    format = "json"
+  )
+  datafiles <- normalize_records(datafiles_result$data)
+  cat("\n[INFO] Datafile asset entries found for selected study: ", nrow(datafiles), "\n", sep = "")
+  if (nrow(datafiles) > 0) {
+    print(utils::head(datafiles, 10))
+  }
+
   datasets_result <- dataset_list(
     client,
     study = requested_study_name,
