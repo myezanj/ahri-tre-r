@@ -20,6 +20,19 @@ Ordinary installation must consume released AHRI TRE runtime artifacts. It must
 not require this Rust workspace, Cargo, Rust, Zig, PostgreSQL development
 headers, or a local `target/` directory.
 
+## Runtime Artifact Delivery
+
+Runtime artifacts are distributed through GitHub Releases in
+`AHRIORG/ahri-tre-rs` as architecture-specific archives. This repository does
+not bundle runtime binaries inside the R package.
+
+Ordinary users should install a matching runtime archive for their platform,
+unpack it, and set `AHRI_TRE_RUNTIME_ROOT` to that directory before using
+runtime-backed operations.
+
+For repository development, the devcontainer installer already automates this
+release download and verification flow using `.devcontainer/install_ahri_tre_runtime.sh`.
+
 ## Development
 
 For local wrapper work, set `AHRI_TRE_RUNTIME_ROOT` to an unpacked runtime

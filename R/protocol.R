@@ -18,6 +18,8 @@ AhriTreClient <- function(api = CApi(), runtime_config = RuntimeConfig(), check_
   client
 }
 
+#' @export
+#' @method close ahri_tre_client
 close.ahri_tre_client <- function(con, ...) {
   ahri_tre_client_free_bridge(con$api$library_path, con$handle)
   invisible(NULL)

@@ -4,6 +4,7 @@ FROM rocker/r-ver:4.4.2
 ARG AHRI_TRE_RELEASE_TAG=v0.8.3
 ARG AHRI_TRE_RELEASE_REPOSITORY=AHRIORG/ahri-tre-rs
 ARG AHRI_TRE_ALLOW_LATEST_FALLBACK=1
+ARG AHRI_TRE_RUNTIME_OPTIONAL=1
 ARG AHRI_TRE_RUNTIME_LOCAL_ARCHIVE=
 ARG AHRI_TRE_RUNTIME_LOCAL_CHECKSUM=
 
@@ -31,6 +32,7 @@ RUN --mount=type=secret,id=github_token,required=false \
     AHRI_TRE_RELEASE_TAG="${AHRI_TRE_RELEASE_TAG}" \
     AHRI_TRE_RELEASE_REPOSITORY="${AHRI_TRE_RELEASE_REPOSITORY}" \
     AHRI_TRE_ALLOW_LATEST_FALLBACK="${AHRI_TRE_ALLOW_LATEST_FALLBACK}" \
+    AHRI_TRE_RUNTIME_OPTIONAL="${AHRI_TRE_RUNTIME_OPTIONAL}" \
     AHRI_TRE_RUNTIME_LOCAL_ARCHIVE="${AHRI_TRE_RUNTIME_LOCAL_ARCHIVE}" \
     AHRI_TRE_RUNTIME_LOCAL_CHECKSUM="${AHRI_TRE_RUNTIME_LOCAL_CHECKSUM}" \
     AHRI_TRE_RUNTIME_CACHE_DIR="/tmp/ahri-tre-runtime-cache" \
@@ -42,14 +44,13 @@ RUN printf '%s\n' \
         'export LD_LIBRARY_PATH="/opt/ahri-tre-runtime/lib:${LD_LIBRARY_PATH:-}"' \
         > /etc/profile.d/ahri-tre-runtime.sh
 
-RUN install2.r --error \
-        arrow \
-        devtools \
-        jsonlite \
-        testthat \
-        tibble
+COPY DESCRIPTION /tmp/ahri-tre-r/DESCRIPTION
+RUN bash -lc 'for i in 1 2 3; do install2.r --error remotes && exit 0; echo "retrying remotes install ($i/3)"; sleep 5; done; exit 1'
+RUN R -q -e "remotes::install_deps('/tmp/ahri-tre-r', dependencies = TRUE, upgrade = 'never')"
 
 RUN useradd -m -s /bin/bash vscode \
+    && mkdir -p /home/vscode/.vscode-server \
+    && chown -R vscode:vscode /home/vscode \
     && echo "vscode ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/vscode \
     && chmod 0440 /etc/sudoers.d/vscode
 

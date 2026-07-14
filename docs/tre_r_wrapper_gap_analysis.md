@@ -4,38 +4,44 @@ This compares function names from TRE Public Interfaces.csv with currently imple
 
 ## Coverage Summary
 
-- Total unique TRE interface functions: 128
-- Total unique R functions in wrapper code: 57
-- Direct name matches: 0
-- Missing TRE functions (direct name comparison): 128
+- Total exported R wrapper functions: 139 (from `NAMESPACE`)
+- Backlog read/search functions listed in this document: fully implemented
+- Direct CSV name-parity is no longer a useful metric for this repository because
+	wrappers are intentionally namespaced and normalized for R conventions.
 
-## Category Gap Breakdown
+## Category Coverage Snapshot
 
-| Category | Interface Functions | Covered (Direct) | Missing |
-|---|---:|---:|---:|
-| Assets, Datafiles, Datasets | 20 | 0 | 20 |
-| Authentication, Daemon, Sessions | 14 | 0 | 14 |
-| Datastore, Semantic Catalog | 24 | 0 | 24 |
-| Entities, Relations, Transformations, Ingest | 41 | 0 | 41 |
-| Local Commands | 5 | 0 | 5 |
-| Runtime | 5 | 0 | 5 |
-| Study, Governance | 19 | 0 | 19 |
+| Category | Wrapper Surface (exported) |
+|---|---|
+| Study, Governance | `study_*` family present, including access/custodian/duo helpers |
+| Datastore, Semantic Catalog | `datastore_*`, `domain_*`, `variable_*`, `vocabulary_*`, `schema_*` families present |
+| Assets, Datafiles, Datasets | `asset_*`, `datafile_*`, `dataset_*` families present |
+| Authentication, Daemon, Sessions | `auth_*`, `daemon_*`, `session_*` families present |
+| Entities, Relations, Transformations, Ingest | `entity_*`, relation-instance helpers, `transformation_list`, `ingest_*` helpers present |
+| Runtime | `runtime_*` lifecycle helpers present |
+| Local/Utility | `doctor`, `version`, `completion`, smoke helpers present |
 
-## Covered Functions (Direct Match)
+## Completed Backlog Check
 
-- None by direct function-name parity.
+The previously prioritized wrapper backlog items are now implemented:
+
+- `study_list`, `study_get`, `datastore_info`, `datastore_ping`
+- `asset_list`, `asset_get`, `dataset_list`, `dataset_metadata`, `dataset_preview`
+- `auth_status`, `session_status`, `session_list`
+- `study_search`, `dataset_search`, `datafile_search`, `variable_search`
 
 ## Interpretation
 
-- The current R package focuses on C-ABI runtime/client bridging and contract smoke testing.
-- Full TRE control-plane command parity is not yet implemented in R wrappers.
+- The package now exposes broad command-wrapper coverage in addition to C-ABI
+	runtime/client bridging and contract smoke testing.
+- Remaining work should focus on wrapper ergonomics, response normalization,
+	and long-term parity maintenance as protocol commands evolve.
 
-## Implementation Backlog Summary
+## Remaining Opportunities
 
-1. Study/datastore read operations: study_list, study_get, datastore_info, datastore_ping.
-2. Asset/dataset read operations: asset_list, asset_get, dataset_list, dataset_metadata, dataset_preview.
-3. Session/auth read operations: auth_status, session_status, session_list.
-4. Search surfaces: study_search, dataset_search, datafile_search, variable_search.
+1. Improve typed response normalizers and table-friendly return structures.
+2. Expand snapshot/contract tests for less-common command paths.
+3. Keep wrappers synchronized with command/reference schema updates.
 
-See docs/tre_r_wrapper_semantic_gap_analysis.md for capability-level mapping and prioritized phases.
+See docs/tre_r_wrapper_semantic_gap_analysis.md for capability-level status.
 

@@ -76,10 +76,10 @@ an adjacent `.sha256` or `.sha256sum` file is present.
 
 ## Next Steps
 
-- Add CI that runs the contract smoke command against a staged runtime
-  artifact.
-- Generate or validate the bridge declarations against `ahri_tre_ffi_c.h`.
+- Keep CI contract smoke coverage in sync with runtime release updates and
+  environment requirements.
+- Keep bridge/header alignment checks green as C ABI symbols evolve.
 - Add higher-level R helpers only after the corresponding public protocol
   operation exists in the Rust workspace.
-- Decide how released runtime artifacts are bundled or downloaded for ordinary
-  R users.
+- Keep end-user runtime installation guidance aligned with release artifact
+  naming, target triples, and checksum conventions.

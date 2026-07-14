@@ -5,6 +5,7 @@ release_tag="${AHRI_TRE_RELEASE_TAG:-v0.8.3}"
 release_repository="${AHRI_TRE_RELEASE_REPOSITORY:-AHRIORG/ahri-tre-rs}"
 install_dir="${AHRI_TRE_RUNTIME_ROOT:-/opt/ahri-tre-runtime}"
 allow_latest_fallback="${AHRI_TRE_ALLOW_LATEST_FALLBACK:-1}"
+runtime_optional="${AHRI_TRE_RUNTIME_OPTIONAL:-0}"
 local_runtime_cache_dir="${AHRI_TRE_RUNTIME_CACHE_DIR:-/tmp/ahri-tre-runtime-cache}"
 local_runtime_archive="${AHRI_TRE_RUNTIME_LOCAL_ARCHIVE:-}"
 local_runtime_checksum="${AHRI_TRE_RUNTIME_LOCAL_CHECKSUM:-}"
@@ -34,6 +35,17 @@ archive_asset_url=""
 checksum_asset_name=""
 checksum_asset_id=""
 checksum_asset_url=""
+
+is_truthy() {
+  case "${1:-}" in
+    1 | true | TRUE | yes | YES | on | ON)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
 
 resolve_cache_path() {
   local path="$1"
@@ -215,10 +227,33 @@ if try_install_local_runtime; then
   exit 0
 fi
 
-resolve_release_metadata || exit 1
-resolve_asset_metadata || exit 1
+if ! resolve_release_metadata; then
+  if is_truthy "${runtime_optional}"; then
+    cat >&2 <<EOF
+warning: AHRI TRE runtime could not be resolved from GitHub; continuing without runtime because AHRI_TRE_RUNTIME_OPTIONAL=${runtime_optional}
+EOF
+    exit 0
+  fi
+  exit 1
+fi
+
+if ! resolve_asset_metadata; then
+  if is_truthy "${runtime_optional}"; then
+    cat >&2 <<EOF
+warning: AHRI TRE runtime assets are unavailable for ${release_tag_effective}; continuing without runtime because AHRI_TRE_RUNTIME_OPTIONAL=${runtime_optional}
+EOF
+    exit 0
+  fi
+  exit 1
+fi
 
 download_asset "${archive_asset_name}" "${archive_asset_id}" "${archive_asset_url}" "${tmp_dir}/${archive_asset_name}" || {
+  if is_truthy "${runtime_optional}"; then
+    cat >&2 <<EOF
+warning: failed to download AHRI TRE runtime archive ${archive_asset_name}; continuing without runtime because AHRI_TRE_RUNTIME_OPTIONAL=${runtime_optional}
+EOF
+    exit 0
+  fi
   cat >&2 <<EOF
 failed to download AHRI TRE runtime archive asset: ${archive_asset_name}
 If ${release_repository} is private, set GITHUB_TOKEN in the environment used to rebuild the devcontainer.
@@ -227,6 +262,12 @@ EOF
 }
 
 download_asset "${checksum_asset_name}" "${checksum_asset_id}" "${checksum_asset_url}" "${tmp_dir}/${checksum_asset_name}" || {
+  if is_truthy "${runtime_optional}"; then
+    cat >&2 <<EOF
+warning: failed to download AHRI TRE runtime checksum ${checksum_asset_name}; continuing without runtime because AHRI_TRE_RUNTIME_OPTIONAL=${runtime_optional}
+EOF
+    exit 0
+  fi
   cat >&2 <<EOF
 failed to download AHRI TRE runtime checksum asset: ${checksum_asset_name}
 If ${release_repository} is private, set GITHUB_TOKEN in the environment used to rebuild the devcontainer.

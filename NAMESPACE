@@ -1,4 +1,5 @@
 ﻿useDynLib(ahritre, .registration = TRUE, .fixes = "C_")
+S3method(close,ahri_tre_client)
 export(AhriTreClient)
 export(arrow_ipc_to_table)
 export(asset_delete)
