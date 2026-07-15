@@ -8,6 +8,7 @@
 \alias{payload_smoke_summary}
 \alias{protocol_failure_summary}
 \alias{redact_diagnostics}
+\alias{read_dataset}
 \alias{run_contract_smoke}
 \alias{runtime_discover_daemon_binary}
 \alias{runtime_ensure}
@@ -37,6 +38,7 @@ protocol execution, payload conversion, and smoke diagnostics.
 \section{Protocol Client and Results}{
 \describe{
   \item{\code{AhriTreClient(...)}}{Creates a protocol client from an ABI API handle.}
+  \item{\code{read_dataset(ds, study_name, dataset_name, include_versions = FALSE, version = NULL)}}{Retrieves dataset rows through wrapper APIs with optional version preference and fallback to latest available.}
   \item{\code{execute_json(client, request)}}{Executes a protocol JSON request
   and returns an envelope plus payloads.}
   \item{\code{protocol_failure_summary(envelope)}}{Normalizes protocol failures
