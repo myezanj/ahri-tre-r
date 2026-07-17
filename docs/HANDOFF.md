@@ -1,6 +1,6 @@
 # AHRI TRE R Binding Handoff
 
-This is a seed for the future external `ahriTREr_rs` repository created from
+This is a seed for the future external `ahriTRErRs` repository created from
 ADR-0005 and the shared binding-repository seed contract:
 
 - `docs/book/src/binding-repository-seed-contract.md`
@@ -18,8 +18,8 @@ Run the shared contract smoke path against a staged or released runtime
 artifact with:
 
 ```bash
-AHRI_TRE_RUNTIME_ROOT=/workspaces/ahriTREr_rs/dist/ahri-tre-dev \
-  R -q -e 'jsonlite::write_json(ahritre::run_contract_smoke(), stdout(), auto_unbox = TRUE, pretty = TRUE)'
+AHRI_TRE_RUNTIME_ROOT=/workspaces/ahriTRErRs/dist/ahri-tre-dev \
+  R -q -e 'jsonlite::write_json(ahriTRErRs::run_contract_smoke(), stdout(), auto_unbox = TRUE, pretty = TRUE)'
 ```
 
 The smoke path loads the packaged C ABI, checks protocol compatibility,
@@ -54,7 +54,7 @@ R-specific helpers.
 ## Development Container
 
 The devcontainer runs R with a sibling PostgreSQL service. It exports
-`AHRI_TRE_LAKE_CONTAINER_PATH=/workspaces/ahriTREr_rs/.lake` and maps
+`AHRI_TRE_LAKE_CONTAINER_PATH=/workspaces/ahriTRErRs/.lake` and maps
 `TRE_LAKE_PATH` to the same container-visible location. Keep host-only paths out
 of runtime code and diagnostics.
 
@@ -63,7 +63,7 @@ edit that file for local overrides; `.devcontainer/.env` is ignored and must
 remain uncommitted.
 
 The container image installs the `v0.8.3` AHRI TRE runtime release from
-`AHRIORG/ahri-tre-rs`, selecting the Linux artifact that matches `uname -m`, and
+`myezanj/ahri-tre-rs`, selecting the Linux artifact that matches `uname -m`, and
 exports `AHRI_TRE_RUNTIME_ROOT=/opt/ahri-tre-runtime`. If the release is
 private, the devcontainer build requires `GITHUB_TOKEN` in the build
 environment. Set `AHRI_TRE_RELEASE_REPOSITORY` in `.devcontainer/.env` if

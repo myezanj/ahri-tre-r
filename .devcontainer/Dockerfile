@@ -2,7 +2,7 @@
 FROM rocker/r-ver:4.4.2
 
 ARG AHRI_TRE_RELEASE_TAG=v0.8.3
-ARG AHRI_TRE_RELEASE_REPOSITORY=AHRIORG/ahri-tre-rs
+ARG AHRI_TRE_RELEASE_REPOSITORY=myezanj/ahri-tre-rs
 ARG AHRI_TRE_ALLOW_LATEST_FALLBACK=1
 ARG AHRI_TRE_RUNTIME_OPTIONAL=1
 ARG AHRI_TRE_RUNTIME_LOCAL_ARCHIVE=
@@ -48,9 +48,9 @@ RUN printf '%s\n' \
         'export LD_LIBRARY_PATH="/opt/ahri-tre-runtime/lib:${LD_LIBRARY_PATH:-}"' \
         > /etc/profile.d/ahri-tre-runtime.sh
 
-COPY DESCRIPTION /tmp/ahriTREr_rs/DESCRIPTION
+COPY DESCRIPTION /tmp/ahriTRErRs/DESCRIPTION
 RUN bash -lc 'for i in 1 2 3; do install2.r --error remotes && exit 0; echo "retrying remotes install ($i/3)"; sleep 5; done; exit 1'
-RUN R -q -e "remotes::install_deps('/tmp/ahriTREr_rs', dependencies = TRUE, upgrade = 'never')"
+RUN R -q -e "remotes::install_deps('/tmp/ahriTRErRs', dependencies = TRUE, upgrade = 'never')"
 
 RUN useradd -m -s /bin/bash vscode \
     && mkdir -p /home/vscode/.vscode-server \
@@ -67,4 +67,4 @@ RUN printf '%s\n' \
     && chown vscode:vscode /home/vscode/.Renviron /home/vscode/.Rprofile
 
 USER vscode
-WORKDIR /workspaces/ahriTREr_rs
+WORKDIR /workspaces/ahriTRErRs

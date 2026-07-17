@@ -1,7 +1,7 @@
 wrapper_names_from_namespace <- function() {
-  exports <- getNamespaceExports("ahritre")
+  exports <- getNamespaceExports("ahriTRErRs")
   wrappers <- exports[vapply(exports, function(name) {
-    fn <- get(name, envir = asNamespace("ahritre"), mode = "function")
+    fn <- get(name, envir = asNamespace("ahriTRErRs"), mode = "function")
     fml <- names(formals(fn))
     length(fml) >= 4L &&
       identical(fml[[1]], "client") &&

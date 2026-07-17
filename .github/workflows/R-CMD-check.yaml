@@ -26,7 +26,7 @@ jobs:
     env:
       AHRI_TRE_RUNTIME_ROOT: ${{ github.workspace }}/.runtime/ahri-tre
       AHRI_TRE_RELEASE_TAG: v0.8.3
-      AHRI_TRE_RELEASE_REPOSITORY: AHRIORG/ahri-tre-rs
+      AHRI_TRE_RELEASE_REPOSITORY: myezanj/ahri-tre-rs
       AHRI_TRE_ALLOW_LATEST_FALLBACK: 1
       AHRI_TRE_RUNTIME_OPTIONAL: 0
       AHRI_TRE_LAKE_CONTAINER_PATH: ${{ github.workspace }}/.lake
@@ -80,7 +80,7 @@ jobs:
       - name: Run contract smoke against staged runtime
         run: |
           mkdir -p "$TRE_LAKE_PATH"
-          Rscript -e 'jsonlite::write_json(ahritre::run_contract_smoke(), stdout(), auto_unbox = TRUE, pretty = TRUE)'
+          Rscript -e 'jsonlite::write_json(ahriTRErRs::run_contract_smoke(), stdout(), auto_unbox = TRUE, pretty = TRUE)'
 
       - name: Run tests
         run: Rscript -e 'devtools::test()'

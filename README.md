@@ -1,4 +1,4 @@
-# ahriTREr_rs
+# ahriTRErRs
 
 Seed repository for the future AHRI TRE R binding.
 
@@ -7,7 +7,7 @@ Seed repository for the future AHRI TRE R binding.
 Install from GitHub:
 
 ```r
-remotes::install_github("AHRIORG/ahriTREr_rs")
+remotes::install_github("myezanj/ahriTREr_rs")
 ```
 
 This package is intentionally small. It demonstrates how an R package should
@@ -23,7 +23,7 @@ headers, or a local `target/` directory.
 ## Runtime Artifact Delivery
 
 Runtime artifacts are distributed through GitHub Releases in
-`AHRIORG/ahri-tre-rs` as architecture-specific archives. This repository does
+`myezanj/ahri-tre-rs` as architecture-specific archives. This repository does
 not bundle runtime binaries inside the R package.
 
 Ordinary users should install a matching runtime archive for their platform,
@@ -47,8 +47,8 @@ share/ahri-tre/manifest.json
 
 The devcontainer exports:
 
-- `AHRI_TRE_LAKE_CONTAINER_PATH=/workspaces/ahriTREr_rs/.lake`
-- `TRE_LAKE_PATH=/workspaces/ahriTREr_rs/.lake`
+- `AHRI_TRE_LAKE_CONTAINER_PATH=/workspaces/ahriTRErRs/.lake`
+- `TRE_LAKE_PATH=/workspaces/ahriTRErRs/.lake`
 
 The devcontainer reads defaults from `.devcontainer/.env`.
 Edit that file directly when you need local overrides; `.devcontainer/.env` is
@@ -136,8 +136,8 @@ Regenerate TRE command reference and schema-derived docs:
 Run the shared binding_contract smoke path against a staged package with:
 
 ```bash
-AHRI_TRE_RUNTIME_ROOT=/workspaces/ahriTREr_rs/dist/ahri-tre-dev \
-  R -q -e 'jsonlite::write_json(ahritre::run_contract_smoke(), stdout(), auto_unbox = TRUE, pretty = TRUE)'
+AHRI_TRE_RUNTIME_ROOT=/workspaces/ahriTRErRs/dist/ahri-tre-dev \
+  R -q -e 'jsonlite::write_json(ahriTRErRs::run_contract_smoke(), stdout(), auto_unbox = TRUE, pretty = TRUE)'
 ```
 
 The smoke path loads the packaged C ABI, checks ABI/library/protocol

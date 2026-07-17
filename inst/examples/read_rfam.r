@@ -1,13 +1,13 @@
-suppressPackageStartupMessages(library(ahritre))
+suppressPackageStartupMessages(library(ahriTRErRs))
 if (file.exists(".env")) readRenviron(".env")
-profile_env <- "/workspaces/ahriTREr_rs/.runtime/ahri-tre-runtime/share/ahri-tre/profile.env"
+profile_env <- "/workspaces/ahriTRErRs/.runtime/ahri-tre-runtime/share/ahri-tre/profile.env"
 if (file.exists(profile_env) && file.access(profile_env, 4) == 0) { readRenviron(profile_env); cat("[INFO] Loaded runtime profile env: ", profile_env, "\n", sep = "") }
 req <- c("TRE_SERVER"); miss <- req[!nzchar(Sys.getenv(req, unset = ""))]
 if (length(miss) > 0) stop("Missing required vars: ", paste(miss, collapse = ", "), call. = FALSE)
 cat("[INFO] Runtime profile env verification passed.\n")
 server <- Sys.getenv("TRE_SERVER", unset = ""); lake_db <- Sys.getenv("TRE_LAKE_DB", unset = Sys.getenv("TRE_TEST_LAKE_DB", unset = "")); lake_data <- Sys.getenv("TRE_LAKE_PATH", unset = Sys.getenv("TRE_TEST_LAKE_PATH", unset = ""))
 if (nzchar(lake_db)) Sys.setenv(TRE_LAKE_DB = lake_db); if (nzchar(lake_data)) Sys.setenv(TRE_LAKE_PATH = lake_data)
-roots <- unique(c(Sys.getenv("AHRI_TRE_RUNTIME_ROOT", unset = "/opt/ahri-tre-runtime"), file.path(getwd(), ".runtime", "ahri-tre-runtime"), "/workspaces/ahriTREr_rs/.runtime/ahri-tre-runtime"))
+roots <- unique(c(Sys.getenv("AHRI_TRE_RUNTIME_ROOT", unset = "/opt/ahri-tre-runtime"), file.path(getwd(), ".runtime", "ahri-tre-runtime"), "/workspaces/ahriTRErRs/.runtime/ahri-tre-runtime"))
 probes <- normalizePath(path.expand(roots), mustWork = FALSE); hits <- probes[file.exists(file.path(probes, "share", "ahri-tre", "manifest.json"))]
 runtime_root <- if (length(hits) > 0) hits[[1]] else probes[[1]]; manifest <- file.path(runtime_root, "share", "ahri-tre", "manifest.json")
 if (!file.exists(manifest)) {
@@ -21,7 +21,7 @@ if (!file.exists(manifest)) {
   cli_env <- paste0("LD_LIBRARY_PATH=", file.path(runtime_root, "lib"), ":", Sys.getenv("LD_LIBRARY_PATH", unset = ""))
   run_cli <- function(args, env = cli_env) suppressWarnings(system2(cli_bin, args, stdout = TRUE, stderr = TRUE, env = env))
   stop_before_study <- FALSE
-  cat("[INFO] Using ahritre package wrappers.\n[INFO] AHRI_TRE_RUNTIME_ROOT=", runtime_root, "\n[INFO] OAuth flag: --profile <profile>\n", sep = "")
+  cat("[INFO] Using ahriTRErRs package wrappers.\n[INFO] AHRI_TRE_RUNTIME_ROOT=", runtime_root, "\n[INFO] OAuth flag: --profile <profile>\n", sep = "")
   cat("[INFO] Resolved datastore config: server=", server, ", datastore=", session_name, ", lake_db=", lake_db, ", lake_data=", lake_data, "\n", sep = "")
   if (file.exists(cli_bin)) {
     cat("[INFO] Session list snapshot:\n", paste(run_cli(c("session", "list", "--format", "json")), collapse = "\n"), "\n", sep = "")

@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-# Minimal ahritre build/release script
+# Minimal ahriTRErRs build/release script
 # Ensures both .tar.gz and .zip release artifacts are created in ./release folder
 
 if (file.exists(".env")) readRenviron(".env")
@@ -28,6 +28,52 @@ initialize_release_env <- function() {
     }
 }
 
+ensure_user_library_precedence <- function() {
+    user_lib <- Sys.getenv("R_LIBS_USER", "")
+    if (!nzchar(user_lib)) {
+        minor_parts <- strsplit(R.version$minor, ".", fixed = TRUE)[[1]]
+        user_lib <- file.path(
+            path.expand("~"),
+            "R",
+            paste0(R.version$platform, "-library"),
+            paste0(R.version$major, ".", minor_parts[[1]])
+        )
+        Sys.setenv(R_LIBS_USER = user_lib)
+    }
+
+    user_lib <- normalizePath(path.expand(user_lib), winslash = "/", mustWork = FALSE)
+    dir.create(user_lib, recursive = TRUE, showWarnings = FALSE)
+    .libPaths(unique(c(user_lib, .libPaths())))
+
+    invisible(user_lib)
+}
+
+ensure_languageserver_package <- function() {
+    user_lib <- ensure_user_library_precedence()
+
+    if (requireNamespace("languageserver", quietly = TRUE)) {
+        cat("[INFO] languageserver already installed (lib: ", user_lib, ")\n", sep = "")
+        return(invisible(TRUE))
+    }
+
+    cat("[INFO] Installing languageserver (lib: ", user_lib, ")\n", sep = "")
+    install_ok <- tryCatch({
+        install.packages("languageserver", repos = "https://cloud.r-project.org")
+        requireNamespace("languageserver", quietly = TRUE)
+    }, error = function(e) {
+        warning("languageserver installation failed: ", conditionMessage(e), call. = FALSE)
+        FALSE
+    })
+
+    if (isTRUE(install_ok)) {
+        cat("[INFO] languageserver installed successfully.\n")
+    } else {
+        warning("languageserver is still unavailable after install attempt.", call. = FALSE)
+    }
+
+    invisible(install_ok)
+}
+
 ensure_roxygen_package <- function() {
     suppressMessages({
         library(roxygen2)
@@ -45,10 +91,20 @@ run_in_clean_rscript <- function(expr, context_label) {
     if (!nzchar(rscript)) {
         stop("Rscript was not found on PATH; cannot run ", context_label, " in clean session.")
     }
-    script_path <- tempfile(pattern = "ahritre-clean-", fileext = ".R")
+    script_path <- tempfile(pattern = "ahriTRErRs-clean-", fileext = ".R")
     on.exit(unlink(script_path, force = TRUE), add = TRUE)
     writeLines(c(
         "if (file.exists('.env')) readRenviron('.env')",
+        "user_lib <- Sys.getenv('R_LIBS_USER', '')",
+        "if (!nzchar(user_lib)) {",
+        "  minor_parts <- strsplit(R.version$minor, '.', fixed = TRUE)[[1]]",
+        "  user_lib <- file.path(path.expand('~'), 'R', paste0(R.version$platform, '-library'), paste0(R.version$major, '.', minor_parts[[1]]))",
+        "  Sys.setenv(R_LIBS_USER = user_lib)",
+        "}",
+        "user_lib <- normalizePath(path.expand(user_lib), winslash = '/', mustWork = FALSE)",
+        "dir.create(user_lib, recursive = TRUE, showWarnings = FALSE)",
+        ".libPaths(unique(c(user_lib, .libPaths())))",
+        "if (!requireNamespace('languageserver', quietly = TRUE)) install.packages('languageserver', repos = 'https://cloud.r-project.org')",
         expr
     ), con = script_path)
     status <- system2(rscript, c(script_path))
@@ -104,7 +160,7 @@ cleanup_src_artifacts <- function() {
 }
 
 run_document_task <- function() {
-    print_header("Documenting ahritre")
+    print_header("Documenting ahriTRErRs")
     print_step("Generating documentation")
     run_in_clean_rscript(
         "if (!requireNamespace('roxygen2', quietly = TRUE)) stop('roxygen2 is required for --document'); roxygen2::roxygenise(package.dir='.')",
@@ -117,7 +173,7 @@ run_document_task <- function() {
 }
 
 run_test_task <- function() {
-    print_header("Testing ahritre")
+    print_header("Testing ahriTRErRs")
     print_step("Running test suite")
     run_in_clean_rscript(
         "if (!requireNamespace('devtools', quietly = TRUE)) stop('devtools is required for --test'); devtools::test()",
@@ -126,7 +182,7 @@ run_test_task <- function() {
 }
 
 run_check_task <- function(strict = FALSE) {
-    print_header("Checking ahritre")
+    print_header("Checking ahriTRErRs")
     print_step("Running R CMD check")
     run_in_clean_rscript(
         sprintf(
@@ -141,7 +197,7 @@ run_check_task <- function(strict = FALSE) {
 }
 
 run_install_task <- function() {
-    print_header("Installing ahritre")
+    print_header("Installing ahriTRErRs")
     print_step("Installing package from source tree")
     run_in_clean_rscript(
         "if (!requireNamespace('devtools', quietly = TRUE)) stop('devtools is required for --install'); devtools::install(upgrade = FALSE, dependencies = FALSE, quiet = FALSE)",
@@ -208,6 +264,7 @@ if ("--help" %in% cli_args) {
 }
 
 initialize_release_env()
+ensure_languageserver_package()
 
 build_requested <- "--build" %in% cli_args
 strict_check <- "--strict-check" %in% cli_args
@@ -453,7 +510,7 @@ desc <- read.dcf("DESCRIPTION")
 pkg <- desc[1, "Package"]
 ver <- desc[1, "Version"]
 
-print_header("Building ahritre Package")
+print_header("Building ahriTRErRs Package")
 cat("\nPackage:", pkg)
 cat("\nVersion:", ver)
 cat("\nPlatform:", .Platform$OS.type)
@@ -461,10 +518,10 @@ cat("\nR version:", R.version.string)
 print_ducklake_runtime_diagnostics()
 
 local_dir <- ".local"
-local_backup_dir <- file.path(normalizePath(".."), ".ahritre_local_backup")
+local_backup_dir <- file.path(normalizePath(".."), ".ahriTRErRs_local_backup")
 local_dir_moved <- FALSE
 rproj_user_dir <- ".Rproj.user"
-rproj_user_backup_dir <- file.path(normalizePath(".."), ".ahritre_rproj_user_backup")
+rproj_user_backup_dir <- file.path(normalizePath(".."), ".ahriTRErRs_rproj_user_backup")
 rproj_user_moved <- FALSE
 
 restore_local_dir <- function() {
@@ -664,7 +721,7 @@ use_devtools_tarball <- tolower(trimws(env_get_first(c("AHRI_TRE_USE_DEVTOOLS_TA
 run_base_r_build <- function() {
     cat("  Building source tarball with staged R CMD build...\n")
 
-    stage_root <- tempfile("ahritre_build_stage_")
+    stage_root <- tempfile("ahriTRErRs_build_stage_")
     stage_repo <- file.path(stage_root, pkg)
     dir.create(stage_repo, recursive = TRUE, showWarnings = FALSE)
 

@@ -1,8 +1,8 @@
 {
-  "name": "ahriTREr_rs",
+  "name": "ahriTRErRs",
   "dockerComposeFile": "docker_compose.yml",
   "service": "r",
-  "workspaceFolder": "/workspaces/ahriTREr_rs",
+  "workspaceFolder": "/workspaces/ahriTRErRs",
   "remoteUser": "vscode",
   "features": {},
   "customizations": {
